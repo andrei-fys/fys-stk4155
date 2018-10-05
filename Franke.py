@@ -29,7 +29,7 @@ def SetUpDesignMat(x,y,N):
     degree_four = x**4 + 4*x**3*y + 6*x**2*y**2 + 4*y**3*x + y**4
     # Degree 5
     degree_five = x**5 + 5*x**4*y + 10*x**3*y**2 + 10*x**2*y**3 + 5*y**4*x + y**5
-    return  np.hstack([np.ones((N*N,1)), degree_one, degree_two, degree_three, degree_four, degree_three])
+    return  np.hstack([np.ones((N*N,1)), degree_one, degree_two, degree_three, degree_four, degree_five])
 	
 fig = plt.figure()
 ax = fig.gca(projection='3d')
