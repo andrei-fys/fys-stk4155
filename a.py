@@ -39,7 +39,7 @@ def ScikitSolverLasso(data, z):
     print("Lasso Intercept: ", lasso.intercept_)
 
 def NaiveSolverOLS(z, data, data_n, x_n, y_n):
-    print(' ============== Naive OLS ============')	
+    print(' =============== Naive OLS ==============')	
     beta = np.linalg.inv(data.T.dot(data)).dot(data.T).dot(z)
     zpredict = data_n.dot(beta)
     print('Coefficient beta naive: \n', beta.reshape(1,-1))
@@ -48,8 +48,10 @@ def NaiveSolverOLS(z, data, data_n, x_n, y_n):
     print('MSE naive  ', MSE(z, zpredict))
 
 def NaiveSolverRidge(data, z, x_n, y_n, data_n):
-    I = np.eye(N)	
-    beta = np.linalg.inv(data.T.dot(data) + lambdaI).dot(data.T).dot(z)
+    print(' ============== Naive Ridge ============') 
+    I = np.identity(6)	
+    lambda_parameter = 0.67
+    beta = np.linalg.inv(data.T.dot(data) + lambda_parameter*I).dot(data.T).dot(z)
     zpredict = data_n.dot(beta)
     print('Coefficient beta naive Ridge: \n', beta.reshape(1,-1))
     print('Mean naive ', Mean(z))
@@ -102,10 +104,12 @@ y_exact = np.arange(0, 1, 0.05)
 #Round round baby round round 
 
 z, data, data_n, x_n, y_n = SetUpData(N)
-ScikitSolverRidge(data, z)
-ScikitSolverLasso(data, z)
+
+#ScikitSolverLasso(data, z)
 #print("########################################")
 #print("Naive: ")
 NaiveSolverOLS(z, data, data_n, x_n, y_n)
 #print("Scikit: ")
 ScikitSolverOLS(data, z)
+ScikitSolverRidge(data, z)
+NaiveSolverRidge(data, z, x_n, y_n, data_n)
