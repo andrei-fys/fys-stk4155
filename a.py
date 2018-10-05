@@ -18,8 +18,8 @@ def ScikitSolverOLS(data, z):
     z_n = clf5.predict(data_n)
     R2 = clf5.score(data_n, z.reshape(-1, 1))
     MSE = mean_squared_error(z.reshape(-1, 1), z_n)
-    print(R2)
-    print(MSE)
+    print('R2 OLS SK', R2)
+    print('MSE OLS SK  ',MSE)
     print('Coefficient beta : \n', clf5.coef_)
 
 def ScikitSolverRidge(data, z):
@@ -32,8 +32,8 @@ def ScikitSolverRidge(data, z):
     z_n = clf5.predict(data_n)
     R2 = clf5.score(data_n, z.reshape(-1, 1))
     MSE = mean_squared_error(z.reshape(-1, 1), z_n)
-    print(R2)
-    print(MSE)
+    print('R2 RIDGE SK ', R2)
+    print('MSE RIDGE SK ', MSE)
     print('Coefficient beta : \n', clf5.coef_)
 
 #def ScikitSolverLasso(data, z):
@@ -62,6 +62,35 @@ def NaiveSolver(data, z):
     data_n = SetUpDesignMat(x_n,y_n,N)
     ypredict = data_n.dot(beta)
     print('Coefficient beta naive: \n', beta.reshape(1,-1))
+    print('Mean naive ', Mean(y))
+    print('R2 naive ', R2(y, ypredict))
+    print('MSE naive  ', MSE(y, ypredict))
+
+
+def Mean(y):
+    return y.mean(axis=0)
+
+def R2(y, y_predict):
+    assert len(y)==len(y_predict)
+    n = len(y)
+    y_mean = Mean(y)
+    s1, s2 = 0, 0
+    for i in range(0, n):
+        s1 += (y[i] - y_predict[i])**2
+        s2 += (y[i] - y_mean)**2
+    s = s1/s2    
+    return 1 - s
+
+def MSE(y, y_predict):
+    assert len(y)==len(y_predict)
+    n = len(y)
+    s = 0
+    for i in range(0, n):
+        s += (y[i] - y_predict[i])**2
+    s /=float(n)
+    return s
+
+
 
 
 #Number of grid points in one dim
