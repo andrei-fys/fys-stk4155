@@ -42,30 +42,38 @@ def SetUpGrid(N):
     x, y = np.meshgrid(x,y)
     return x, y
 	
-fig = plt.figure()
-ax = fig.gca(projection='3d')
+
+def OSL(N):
+    x, y = SetUpGrid(N)
+    z = FrankeFunction(x,y)
+    x = x.reshape(-1, 1)
+    y = y.reshape(-1, 1)
+    z = z.reshape(N*N,1)
+    data = SetUpDesignMat(x,y,N)
+    LinearReg = LinearRegression()
+    LinearReg.fit(data,z)
+    x_n, y_n = SetUpGrid(N)
+    x_n = x_n.reshape(-1, 1)
+    y_n = y_n.reshape(-1, 1)
+    data_n = SetUpDesignMat(x_n,y_n,N)
+    z_n = LinearReg.predict(data_n)
+    R2 = LinearReg.score(data_n, z.reshape(-1, 1))
+    MSE = mean_squared_error(z.reshape(-1, 1), z_n)
+    print(R2)
+    print(MSE)  
+    print('Coefficient beta : \n', LinearReg.coef_)
+
+
+
+
+
+#fig = plt.figure()
+#ax = fig.gca(projection='3d')
 # Make data.
-x_exact = np.arange(0, 1, 0.05)
-y_exact = np.arange(0, 1, 0.05)
-N = 20
-x, y = SetUpGrid(N)
-z = FrankeFunction(x,y)
-x = x.reshape(-1, 1)
-y = y.reshape(-1, 1)
-z = z.reshape(N*N,1)
-data = SetUpDesignMat(x,y,N)
-clf5 = LinearRegression()
-clf5.fit(data,z)
-x_n, y_n = SetUpGrid(N)
-x_n = x_n.reshape(-1, 1)
-y_n = y_n.reshape(-1, 1)
-data_n = SetUpDesignMat(x_n,y_n,N)
-z_n = clf5.predict(data_n)
-R2 = clf5.score(data_n, z.reshape(-1, 1))
-MSE = mean_squared_error(z.reshape(-1, 1), z_n)
-print(R2)
-print(MSE)
-print('Coefficient beta : \n', clf5.coef_)
+#x_exact = np.arange(0, 1, 0.05)
+#y_exact = np.arange(0, 1, 0.05)
+#N = 500
+
 #z = FrankeFunction(x_exact, y_exacti) 
 ## Plot the surface.
 #surf = ax.plot_surface(x, y, z, cmap=cm.coolwarm,
@@ -77,3 +85,5 @@ print('Coefficient beta : \n', clf5.coef_)
 ## Add a color bar which maps values to colors.
 #fig.colorbar(surf, shrink=0.5, aspect=5)
 #plt.show()
+if __name__ == '__main__':
+    OSL(20)
