@@ -4,7 +4,7 @@ from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import numpy as np
 from random import random, seed
-from sklearn.linear_model import LinearRegression,RidgeCV,Lasso
+from sklearn.linear_model import LinearRegression,RidgeCV,Lasso, Ridge
 from sklearn.metrics import mean_squared_error, r2_score
 from Franke import FrankeFunction, SetUpDesignMat, SetUpGrid
 
@@ -25,7 +25,8 @@ def ScikitSolverOLS(data, z):
 
 def ScikitSolverRidge(data, z):
     print(' ============== Scikit Ridge ============')
-    ridge=RidgeCV(alphas=[0.1,1.0,10.0])
+    #ridge=RidgeCV(alphas=[0.1,1.0,10.0])
+    ridge=Ridge(alpha=0.1, fit_intercept=False)
     ridge.fit(data,z)
     print("Ridge Coefficient: ",ridge.coef_)
     print("Ridge Intercept: ", ridge.intercept_)
@@ -50,7 +51,7 @@ def NaiveSolverOLS(z, data, data_n, x_n, y_n):
 def NaiveSolverRidge(data, z, x_n, y_n, data_n):
     print(' ============== Naive Ridge ============') 
     I = np.identity(6)	
-    lambda_parameter = 0.67
+    lambda_parameter = 0.1
     beta = np.linalg.inv(data.T.dot(data) + lambda_parameter*I).dot(data.T).dot(z)
     zpredict = data_n.dot(beta)
     print('Coefficient beta naive Ridge: \n', beta.reshape(1,-1))
