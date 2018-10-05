@@ -34,9 +34,9 @@ def SetUpDesignMat(x,y,N):
 def SetUpGrid(N):    
     x = np.sort(np.random.uniform(0,1,N))
     y = np.sort(np.random.uniform(0,1,N))
-    #mu, sigma = 0.5, 0.28
-    #x += np.random.normal(mu, sigma, N)
-    #y += np.random.normal(mu, sigma, N)
+    mu, sigma = 0.5, 0.28
+    x += np.random.normal(mu, sigma, N)
+    y += np.random.normal(mu, sigma, N)
     x = np.sort(x)
     y = np.sort(y)
     x, y = np.meshgrid(x,y)
@@ -48,35 +48,14 @@ ax = fig.gca(projection='3d')
 x_exact = np.arange(0, 1, 0.05)
 y_exact = np.arange(0, 1, 0.05)
 N = 20
-#x = np.sort(np.random.uniform(0,1,N))
-#y = np.sort(np.random.uniform(0,1,N))
-#mu, sigma = 0.5, 0.28
-#x += np.random.normal(mu, sigma, N)
-#y += np.random.normal(mu, sigma, N)
-#x = np.sort(x)
-#y = np.sort(y)
 x, y = SetUpGrid(N)
 z = FrankeFunction(x,y)
-#print(np.shape(y))
-
-#data = np.c_[np.ones((20,1)), x, y, x**2, x*y, y**2, x**3, x**2*y, x*y**2, y**3, x**4, x**3*y, x**2*y**2, x*y**3,y**4, x**5, x**4*y, x**3*y**2, x**2*y**3,x*y**4, y**5]
-
 x = x.reshape(-1, 1)
 y = y.reshape(-1, 1)
 z = z.reshape(N*N,1)
-
-#print(np.shape(x))
 data = SetUpDesignMat(x,y,N)
 clf5 = LinearRegression()
 clf5.fit(data,z)
-
-#x_n = np.sort(np.random.uniform(0,1,N))
-#y_n = np.sort(np.random.uniform(0,1,N))
-#mu, sigma = 0.5, 0.28
-#x += np.random.normal(mu, sigma, N)
-#y += np.random.normal(mu, sigma, N)
-#x_n = np.sort(x_n)
-#y_n = np.sort(y_n)
 x_n, y_n = SetUpGrid(N)
 x_n = x_n.reshape(-1, 1)
 y_n = y_n.reshape(-1, 1)
@@ -84,14 +63,8 @@ data_n = SetUpDesignMat(x_n,y_n,N)
 z_n = clf5.predict(data_n)
 R2 = clf5.score(data_n, z.reshape(-1, 1))
 MSE = mean_squared_error(z.reshape(-1, 1), z_n)
-
-
 print(R2)
 print(MSE)
-
-#linreg = LinearRegression()
-
-#z = FrankeFunction(x, y) #+ np.random.randn(20, 20)
 
 #z = FrankeFunction(x_exact, y_exacti) 
 ## Plot the surface.
