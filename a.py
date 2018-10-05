@@ -9,7 +9,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 from Franke import FrankeFunction, SetUpDesignMat, SetUpGrid
 
 def ScikitSolverOLS(data, z):
-    print(' ============== Scikit OLS ============')
+   
     clf5 = LinearRegression(fit_intercept=False)
     clf5.fit(data,z)
     x_n, y_n = SetUpGrid(N)
@@ -24,7 +24,7 @@ def ScikitSolverOLS(data, z):
     print('Coefficient beta : \n', clf5.coef_)
 
 def ScikitSolverRidge(data, z):
-    print(' ============== Scikit Ridge ============')
+
     #ridge=RidgeCV(alphas=[0.1,1.0,10.0])
     ridge=Ridge(alpha=0.1, fit_intercept=False)
     ridge.fit(data,z)
@@ -32,7 +32,7 @@ def ScikitSolverRidge(data, z):
     print("Ridge Intercept: ", ridge.intercept_)
     
 def ScikitSolverLasso(data, z):
-    print(' ============== Scikit Lasso ============')
+   
     lasso=Lasso(alpha=0.1)
     lasso.fit(data,z)
     predl=lasso.predict(data)
@@ -52,15 +52,15 @@ def NaiveSolverOLS(z, data, data_n, x_n, y_n):
     return beta
 
 def NaiveSolverRidge(data, z, x_n, y_n, data_n):
-    print(' ============== Naive Ridge ============') 
+    
     I = np.identity(6)	
     lambda_parameter = 0.1
     beta = np.linalg.inv(data.T.dot(data) + lambda_parameter*I).dot(data.T).dot(z)
     zpredict = data_n.dot(beta)
-    #print('Coefficient beta naive Ridge: \n', beta.reshape(1,-1))
-    #print('Mean naive ', Mean(z))
-    #print('R2 naive ', R2(z, zpredict))
-    #print('MSE naive  ', MSE(z, zpredict))
+    print('Coefficient beta naive Ridge: \n', beta.reshape(1,-1))
+    print('Mean naive ', Mean(z))
+    print('R2 naive ', R2(z, zpredict))
+    print('MSE naive  ', MSE(z, zpredict))
     return beta
 
 
@@ -123,14 +123,17 @@ y_exact = np.arange(0, 1, 0.05)
 #Round round baby round round 
 
 z, data, data_n, x_n, y_n = SetUpData(N)
-#ScikitSolverLasso(data, z)
-#print("########################################")
-#print("Naive: ")
-#NaiveSolverOLS(z, data, data_n, x_n, y_n)
-#print("Scikit: ")
-#ScikitSolverOLS(data, z)
-#ScikitSolverRidge(data, z)
-#NaiveSolverRidge(data, z, x_n, y_n, data_n)
+print("########################################")
+print("Scikit OSL: ")
+ScikitSolverOLS(data, z)
+print(' ============== Scikit Lasso ============')
+ScikitSolverLasso(data, z)
+print(' ============== Scikit Ridge ============')
+ScikitSolverRidge(data, z)
+print(' ============== Naive Ridge ============') 
+NaiveSolverRidge(data, z, x_n, y_n, data_n)
+print("Naive OSL : ")
+NaiveSolverOLS(z, data, data_n, x_n, y_n)
 print(' =============== Naive OLS ConfidentIntervalBeta ==============')  
 ConfidentIntervalBeta(Experiments, N)
 
