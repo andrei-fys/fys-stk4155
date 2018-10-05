@@ -49,6 +49,21 @@ def NaiveSolverOLS(data, z):
     print('R2 naive ', R2(y, ypredict))
     print('MSE naive  ', MSE(y, ypredict))
 
+def NaiveSolverRidge(data, z):	
+    xb = data
+    y = z
+    beta = np.linalg.inv(xb.T.dot(xb) + lambdaI).dot(xb.T).dot(y)
+    x_n, y_n = SetUpGrid(N)
+    x_n = x_n.reshape(-1, 1)
+    y_n = y_n.reshape(-1, 1)
+    data_n = SetUpDesignMat(x_n,y_n,N)
+    ypredict = data_n.dot(beta)
+    print('Coefficient beta naive Ridge: \n', beta.reshape(1,-1))
+    print('Mean naive ', Mean(y))
+    print('R2 naive ', R2(y, ypredict))
+    print('MSE naive  ', MSE(y, ypredict))
+
+
 def Mean(y):
     return y.mean(axis=0)
 
