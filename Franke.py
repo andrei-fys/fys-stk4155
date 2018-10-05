@@ -65,7 +65,7 @@ R2 = clf5.score(data_n, z.reshape(-1, 1))
 MSE = mean_squared_error(z.reshape(-1, 1), z_n)
 print(R2)
 print(MSE)
-
+print('Coefficient beta : \n', clf5.coef_)
 #z = FrankeFunction(x_exact, y_exacti) 
 ## Plot the surface.
 #surf = ax.plot_surface(x, y, z, cmap=cm.coolwarm,
