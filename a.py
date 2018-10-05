@@ -40,13 +40,16 @@ def ScikitSolverLasso(data, z):
     print("Lasso Intercept: ", lasso.intercept_)
 
 def NaiveSolverOLS(z, data, data_n, x_n, y_n):
-    print(' =============== Naive OLS ==============')	
+
     beta = np.linalg.inv(data.T.dot(data)).dot(data.T).dot(z)
     zpredict = data_n.dot(beta)
-    print('Coefficient beta naive: \n', beta.reshape(1,-1))
-    print('Mean naive ', Mean(z))
-    print('R2 naive ', R2(z, zpredict))
-    print('MSE naive  ', MSE(z, zpredict))
+    #print('Coefficient beta naive: \n', beta.reshape(1,-1))
+    beta = beta.reshape(-1,1)
+    #print(' Beta0 ', beta[0])
+    #print('Mean naive ', Mean(z))
+    #print('R2 naive ', R2(z, zpredict))
+    #print('MSE naive  ', MSE(z, zpredict))
+    return beta
 
 def NaiveSolverRidge(data, z, x_n, y_n, data_n):
     print(' ============== Naive Ridge ============') 
@@ -54,10 +57,11 @@ def NaiveSolverRidge(data, z, x_n, y_n, data_n):
     lambda_parameter = 0.1
     beta = np.linalg.inv(data.T.dot(data) + lambda_parameter*I).dot(data.T).dot(z)
     zpredict = data_n.dot(beta)
-    print('Coefficient beta naive Ridge: \n', beta.reshape(1,-1))
-    print('Mean naive ', Mean(z))
-    print('R2 naive ', R2(z, zpredict))
-    print('MSE naive  ', MSE(z, zpredict))
+    #print('Coefficient beta naive Ridge: \n', beta.reshape(1,-1))
+    #print('Mean naive ', Mean(z))
+    #print('R2 naive ', R2(z, zpredict))
+    #print('MSE naive  ', MSE(z, zpredict))
+    return beta
 
 
 def Mean(y):
@@ -97,20 +101,37 @@ def SetUpData(N):
     return z, data, data_n, x_n, y_n
 
 
+def ConfidentIntervalBeta(Experiments, N):
+    betaBundle = np.zeros(shape=(6,Experiments))
+    for i in range (0, Experiments):
+        z, data, data_n, x_n, y_n = SetUpData(N)
+        beta = NaiveSolverOLS(z, data, data_n, x_n, y_n)
+        for j in range (0,6):
+            betaBundle[j][i] = beta[j]
+    for i in range (0,6):
+        print ('Confindent interval for beta_{0} : [ {1} ; {2} ]' .format(i, Mean(betaBundle[i][:]) - 2*np.std(betaBundle[i][:]),  Mean(betaBundle[i][:]) + 2*np.std(betaBundle[i][:])))
+
+
+
+
 #Number of grid points in one dim
-N = 20
+Experiments = 10
+N = 500
 #Define interval for the arguments of the Franke function
 x_exact = np.arange(0, 1, 0.05)
 y_exact = np.arange(0, 1, 0.05)
 #Round round baby round round 
 
 z, data, data_n, x_n, y_n = SetUpData(N)
-
 #ScikitSolverLasso(data, z)
 #print("########################################")
 #print("Naive: ")
-NaiveSolverOLS(z, data, data_n, x_n, y_n)
+#NaiveSolverOLS(z, data, data_n, x_n, y_n)
 #print("Scikit: ")
-ScikitSolverOLS(data, z)
-ScikitSolverRidge(data, z)
-NaiveSolverRidge(data, z, x_n, y_n, data_n)
+#ScikitSolverOLS(data, z)
+#ScikitSolverRidge(data, z)
+#NaiveSolverRidge(data, z, x_n, y_n, data_n)
+print(' =============== Naive OLS ConfidentIntervalBeta ==============')  
+ConfidentIntervalBeta(Experiments, N)
+
+
