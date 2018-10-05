@@ -38,34 +38,23 @@ def ScikitSolverLasso(data, z):
     print("Lasso Coefficient: ", lasso.coef_)
     print("Lasso Intercept: ", lasso.intercept_)
 
-def NaiveSolverOLS(data, z):
+def NaiveSolverOLS(z, data, data_n, x_n, y_n):
     print(' ============== Naive OLS ============')	
-    xb = data
-    y = z
-    beta = np.linalg.inv(xb.T.dot(xb)).dot(xb.T).dot(y)
-    x_n, y_n = SetUpGrid(N)
-    x_n = x_n.reshape(-1, 1)
-    y_n = y_n.reshape(-1, 1)
-    data_n = SetUpDesignMat(x_n,y_n,N)
-    ypredict = data_n.dot(beta)
+    beta = np.linalg.inv(data.T.dot(data)).dot(data.T).dot(z)
+    zpredict = data_n.dot(beta)
     print('Coefficient beta naive: \n', beta.reshape(1,-1))
-    print('Mean naive ', Mean(y))
-    print('R2 naive ', R2(y, ypredict))
-    print('MSE naive  ', MSE(y, ypredict))
+    print('Mean naive ', Mean(z))
+    print('R2 naive ', R2(z, zpredict))
+    print('MSE naive  ', MSE(z, zpredict))
 
-def NaiveSolverRidge(data, z):	
-    xb = data
-    y = z
-    beta = np.linalg.inv(xb.T.dot(xb) + lambdaI).dot(xb.T).dot(y)
-    x_n, y_n = SetUpGrid(N)
-    x_n = x_n.reshape(-1, 1)
-    y_n = y_n.reshape(-1, 1)
-    data_n = SetUpDesignMat(x_n,y_n,N)
-    ypredict = data_n.dot(beta)
+def NaiveSolverRidge(data, z, x_n, y_n, data_n):
+    I = np.eye(N)	
+    beta = np.linalg.inv(data.T.dot(data) + lambdaI).dot(data.T).dot(z)
+    zpredict = data_n.dot(beta)
     print('Coefficient beta naive Ridge: \n', beta.reshape(1,-1))
-    print('Mean naive ', Mean(y))
-    print('R2 naive ', R2(y, ypredict))
-    print('MSE naive  ', MSE(y, ypredict))
+    print('Mean naive ', Mean(z))
+    print('R2 naive ', R2(z, zpredict))
+    print('MSE naive  ', MSE(z, zpredict))
 
 
 def Mean(y):
@@ -91,7 +80,18 @@ def MSE(y, y_predict):
     s /=float(n)
     return s
 
-
+def SetUpData(N):
+    x, y = SetUpGrid(N)
+    z = FrankeFunction(x,y)
+    x = x.reshape(-1, 1)
+    y = y.reshape(-1, 1)
+    z = z.reshape(N*N,1)
+    data = SetUpDesignMat(x,y,N)
+    x_n, y_n = SetUpGrid(N)
+    x_n = x_n.reshape(-1, 1)
+    y_n = y_n.reshape(-1, 1)
+    data_n = SetUpDesignMat(x_n,y_n,N)
+    return z, data, data_n, x_n, y_n
 
 
 #Number of grid points in one dim
@@ -100,17 +100,12 @@ N = 20
 x_exact = np.arange(0, 1, 0.05)
 y_exact = np.arange(0, 1, 0.05)
 #Round round baby round round 
-x, y = SetUpGrid(N)
-z = FrankeFunction(x,y)
-x = x.reshape(-1, 1)
-y = y.reshape(-1, 1)
-z = z.reshape(N*N,1)
-data = SetUpDesignMat(x,y,N)
 
+z, data, data_n, x_n, y_n = SetUpData(N)
 ScikitSolverRidge(data, z)
 ScikitSolverLasso(data, z)
 #print("########################################")
 #print("Naive: ")
-NaiveSolverOLS(data, z)
+NaiveSolverOLS(z, data, data_n, x_n, y_n)
 #print("Scikit: ")
 ScikitSolverOLS(data, z)
