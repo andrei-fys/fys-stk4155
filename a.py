@@ -23,35 +23,6 @@ def ScikitSolverOLS(data, z):
     print('Coefficient beta : \n', clf5.coef_)
 
 def ScikitSolverRidge(data, z):
-
-    clf5 = LinearRegression()
-    clf5.fit(data,z)
-    x_n, y_n = SetUpGrid(N)
-    x_n = x_n.reshape(-1, 1)
-    y_n = y_n.reshape(-1, 1)
-    data_n = SetUpDesignMat(x_n,y_n,N)
-    z_n = clf5.predict(data_n)
-    R2 = clf5.score(data_n, z.reshape(-1, 1))
-    MSE = mean_squared_error(z.reshape(-1, 1), z_n)
-    print('R2 RIDGE SK ', R2)
-    print('MSE RIDGE SK ', MSE)
-    print('Coefficient beta : \n', clf5.coef_)
-
-#def ScikitSolverLasso(data, z):
-#    clf5 = LinearRegression()
-#    clf5.fit(data,z)
-#    x_n, y_n = SetUpGrid(N)
-#    x_n = x_n.reshape(-1, 1)
-#    y_n = y_n.reshape(-1, 1)
-#    data_n = SetUpDesignMat(x_n,y_n,N)
-#    z_n = clf5.predict(data_n)
-#    R2 = clf5.score(data_n, z.reshape(-1, 1))
-#    MSE = mean_squared_error(z.reshape(-1, 1), z_n)
-#    print(R2)
-#    print(MSE)
-#    print('Coefficient beta : \n', clf5.coef_)
-
-
     ridge=RidgeCV(alphas=[0.1,1.0,10.0])
     ridge.fit(data,z)
     print("Ridge Coefficient: ",ridge.coef_)
@@ -64,9 +35,7 @@ def ScikitSolverLasso(data, z):
     print("Lasso Coefficient: ", lasso.coef_)
     print("Lasso Intercept: ", lasso.intercept_)
 
-
-
-def NaiveSolver(data, z):	
+def NaiveSolverOLS(data, z):	
     xb = data
     y = z
     beta = np.linalg.inv(xb.T.dot(xb)).dot(xb.T).dot(y)
@@ -79,7 +48,6 @@ def NaiveSolver(data, z):
     print('Mean naive ', Mean(y))
     print('R2 naive ', R2(y, ypredict))
     print('MSE naive  ', MSE(y, ypredict))
-
 
 def Mean(y):
     return y.mean(axis=0)
@@ -123,4 +91,4 @@ data = SetUpDesignMat(x,y,N)
 ScikitSolverOLS(data, z)
 ScikitSolverRidge(data, z)
 ScikitSolverLasso(data, z)
-NaiveSolver(data, z)
+NaiveSolverOLS(data, z)
