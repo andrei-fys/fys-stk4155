@@ -9,7 +9,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 from Franke import FrankeFunction, SetUpDesignMat, SetUpGrid
 
 def ScikitSolverOLS(data, z):
-    clf5 = LinearRegression()
+    clf5 = LinearRegression(fit_intercept=False)
     clf5.fit(data,z)
     x_n, y_n = SetUpGrid(N)
     x_n = x_n.reshape(-1, 1)
@@ -18,8 +18,8 @@ def ScikitSolverOLS(data, z):
     z_n = clf5.predict(data_n)
     R2 = clf5.score(data_n, z.reshape(-1, 1))
     MSE = mean_squared_error(z.reshape(-1, 1), z_n)
-    print('R2 OLS SK', R2)
-    print('MSE OLS SK  ',MSE)
+    print('R2 SciKit', R2)
+    print('MSE SciKit  ',MSE)
     print('Coefficient beta : \n', clf5.coef_)
 
 def ScikitSolverRidge(data, z):
@@ -88,7 +88,10 @@ y = y.reshape(-1, 1)
 z = z.reshape(N*N,1)
 data = SetUpDesignMat(x,y,N)
 
-ScikitSolverOLS(data, z)
 ScikitSolverRidge(data, z)
 ScikitSolverLasso(data, z)
+print("########################################")
+print("Naive: ")
 NaiveSolverOLS(data, z)
+print("Scikit: ")
+ScikitSolverOLS(data, z)
