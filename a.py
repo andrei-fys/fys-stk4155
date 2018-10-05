@@ -9,6 +9,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 from Franke import FrankeFunction, SetUpDesignMat, SetUpGrid
 
 def ScikitSolverOLS(data, z):
+    print(' ============== Scikit OLS ============')
     clf5 = LinearRegression(fit_intercept=False)
     clf5.fit(data,z)
     x_n, y_n = SetUpGrid(N)
@@ -23,19 +24,22 @@ def ScikitSolverOLS(data, z):
     print('Coefficient beta : \n', clf5.coef_)
 
 def ScikitSolverRidge(data, z):
+    print(' ============== Scikit Ridge ============')
     ridge=RidgeCV(alphas=[0.1,1.0,10.0])
     ridge.fit(data,z)
     print("Ridge Coefficient: ",ridge.coef_)
     print("Ridge Intercept: ", ridge.intercept_)
     
 def ScikitSolverLasso(data, z):
+    print(' ============== Scikit Lasso ============')
     lasso=Lasso(alpha=0.1)
     lasso.fit(data,z)
     predl=lasso.predict(data)
     print("Lasso Coefficient: ", lasso.coef_)
     print("Lasso Intercept: ", lasso.intercept_)
 
-def NaiveSolverOLS(data, z):	
+def NaiveSolverOLS(data, z):
+    print(' ============== Naive OLS ============')	
     xb = data
     y = z
     beta = np.linalg.inv(xb.T.dot(xb)).dot(xb.T).dot(y)
@@ -105,8 +109,8 @@ data = SetUpDesignMat(x,y,N)
 
 ScikitSolverRidge(data, z)
 ScikitSolverLasso(data, z)
-print("########################################")
-print("Naive: ")
+#print("########################################")
+#print("Naive: ")
 NaiveSolverOLS(data, z)
-print("Scikit: ")
+#print("Scikit: ")
 ScikitSolverOLS(data, z)
