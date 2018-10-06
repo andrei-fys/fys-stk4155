@@ -73,20 +73,21 @@ def five(x,y,N):
     return  np.hstack([np.ones((N*N,1)), degree_one, degree_two, degree_three, degree_four, degree_five])
 
 
-def SetUpGrid(N):    
+def SetUpGrid(N,noise):    
     x = np.sort(np.random.uniform(0,1,N))
     y = np.sort(np.random.uniform(0,1,N))
-    mu, sigma = 0.5, 0.28
-    x += np.random.normal(mu, sigma, N)
-    y += np.random.normal(mu, sigma, N)
+    if (noise):
+        mu, sigma = 0.5, 0.28
+        x += np.random.normal(mu, sigma, N)
+        y += np.random.normal(mu, sigma, N)
     x = np.sort(x)
     y = np.sort(y)
     x, y = np.meshgrid(x,y)
     return x, y
 	
 
-def OSL(N,degree):
-    x, y = SetUpGrid(N)
+def OSL(N,degree,noise):
+    x, y = SetUpGrid(N,noise)
     z = FrankeFunction(x,y)
     x = x.reshape(-1, 1)
     y = y.reshape(-1, 1)
@@ -94,7 +95,7 @@ def OSL(N,degree):
     data = SetUpDesignMat(x,y,N,degree)
     LinearReg = LinearRegression()
     LinearReg.fit(data,z)
-    x_n, y_n = SetUpGrid(N)
+    x_n, y_n = SetUpGrid(N,noise)
     x_n = x_n.reshape(-1, 1)
     y_n = y_n.reshape(-1, 1)
     data_n = SetUpDesignMat(x_n,y_n,N,degree)
@@ -129,4 +130,5 @@ if __name__ == '__main__':
     # Add a color bar which maps values to colors.
     fig.colorbar(surf, shrink=0.5, aspect=5)
     plt.show()
-#    OSL(20)
+    noise = True
+#    OSL(20,noise)
