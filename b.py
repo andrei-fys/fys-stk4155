@@ -3,7 +3,7 @@
 #import matplotlib.pyplot as plt
 #from matplotlib import cm
 #from matplotlib.ticker import LinearLocator, FormatStrFormatter
-
+import sys
 import numpy as np
 from random import random, seed
 from sklearn.linear_model import LinearRegression,RidgeCV,Lasso, Ridge
@@ -47,6 +47,7 @@ def NaiveSolverOLS(z, data, data_n, x_n, y_n):
     #print('Mean naive ', Mean(z))
     #print('R2 naive ', R2(z, zpredict))
     #print('MSE naive  ', MSE(z, zpredict))
+    print(Mean(z), R2(z, zpredict), MSE(z, zpredict))
     return beta
 
 def NaiveSolverRidge(data, z, x_n, y_n, data_n, degree):
@@ -112,29 +113,42 @@ def ConfidentIntervalBeta(Experiments, N, degree, noise):
 N = 500
 
 # Poly degree
-degree = 4
-
+#degree = 4
+degree = int(sys.argv[1])
 # Interval
 Experiments = 10
 
 # Noise
-noise = True
+#noise = True
+noise = sys.argv[2]
+
+# Resampling
+resampling = True
 
 #Define interval for the arguments of the Franke function
 x_exact = np.arange(0, 1, 0.05)
 y_exact = np.arange(0, 1, 0.05)
 
 z, data, data_n, x_n, y_n = SetUpData(N,degree,noise)
-print("########################################")
-print("Scikit OSL: ")
-ScikitSolverOLS(data, z, degree, noise)
-print(' ============== Scikit Lasso ============')
-ScikitSolverLasso(data, z)
-print(' ============== Scikit Ridge ============')
-ScikitSolverRidge(data, z)
-print(' ============== Naive Ridge ============') 
-NaiveSolverRidge(data, z, x_n, y_n, data_n, degree)
-print(" ============== Naive OSL ============= ")
+
+#print("########################################")
+#print("Scikit OSL: ")
+#ScikitSolverOLS(data, z, degree, noise)
+#print(' ============== Scikit Lasso ============')
+#ScikitSolverLasso(data, z)
+#print(' ============== Scikit Ridge ============')
+#ScikitSolverRidge(data, z)
+#print(' ============== Naive Ridge ============') 
+#NaiveSolverRidge(data, z, x_n, y_n, data_n, degree)
+#print(" ============== Naive OSL ============= ")
+#NaiveSolverOLS(z, data, data_n, x_n, y_n)
+#print(' =============== Naive OLS ConfidentIntervalBeta ==============')  
+#ConfidentIntervalBeta(Experiments, N, degree, noise)
+
+
+print(degree, noise, end='',flush=True)
 NaiveSolverOLS(z, data, data_n, x_n, y_n)
-print(' =============== Naive OLS ConfidentIntervalBeta ==============')  
 ConfidentIntervalBeta(Experiments, N, degree, noise)
+
+
+
