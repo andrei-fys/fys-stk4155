@@ -20,23 +20,27 @@ def ScikitSolverOLS(data, z, degree):
     z_n = clf5.predict(data_n)
     R2 = clf5.score(data_n, z.reshape(-1, 1))
     MSE = mean_squared_error(z.reshape(-1, 1), z_n)
-    print('R2 SciKit', R2)
-    print('MSE SciKit  ',MSE)
-    print('Coefficient beta : \n', clf5.coef_)
+    #print('R2 SciKit', R2)
+    #print('MSE SciKit  ',MSE)
+    beta = clf5.coef_
+    #print('Coefficient beta : \n', beta)
+    return beta.reshape(-1,1)
 
 def ScikitSolverRidge(data, z):
     #ridge=RidgeCV(alphas=[0.1,1.0,10.0])
     ridge=Ridge(alpha=0.1, fit_intercept=False)
     ridge.fit(data,z)
-    print("Ridge Coefficient: ",ridge.coef_)
-    print("Ridge Intercept: ", ridge.intercept_)
+    #print("Ridge Coefficient: ",ridge.coef_)
+    #print("Ridge Intercept: ", ridge.intercept_)
+    beta = ridge.coef_
+    return beta.reshape(-1,1)
     
 def ScikitSolverLasso(data, z):
     lasso=Lasso(alpha=0.1)
     lasso.fit(data,z)
     predl=lasso.predict(data)
-    print("Lasso Coefficient: ", lasso.coef_)
-    print("Lasso Intercept: ", lasso.intercept_)
+    #print("Lasso Coefficient: ", lasso.coef_)
+    #print("Lasso Intercept: ", lasso.intercept_)
 
 def NaiveSolverOLS(z, data, data_n, x_n, y_n):
     beta = np.linalg.inv(data.T.dot(data)).dot(data.T).dot(z)
@@ -104,8 +108,22 @@ def ConfidentIntervalBeta(Experiments, N, degree, method):
         if method == "OLS":
             beta = NaiveSolverOLS(z, data, data_n, x_n, y_n)
         elif method == "Ridge":
-            beta = NaiveSolverRidge(data, z, x_n, y_n, data_n, degree)
+            beta = NaiveSolverRidge(data, z, x_n, y_n, data_n, degree) 
             beta = beta.reshape(-1,1)
+        for j in range (0, degree+1):
+            betaBundle[j][i] = beta[j]
+    for i in range (0,degree+1):
+        print ('Variance for beta_{0} is {1}' .format(i, np.var(betaBundle[i][:])))
+        print ('Confindent interval for beta_{0} : [ {1} ; {2} ]' .format(i, Mean(betaBundle[i][:]) - 2*np.std(betaBundle[i][:]),  Mean(betaBundle[i][:]) + 2*np.std(betaBundle[i][:])))
+
+def ConfidentIntervalBetaSKI(Experiments, N, degree, method):
+    betaBundle = np.zeros(shape=(degree+1,Experiments))
+    for i in range (0, Experiments):
+        z, data, data_n, x_n, y_n = SetUpData(N,degree)
+        if method == "OLS":
+            beta = ScikitSolverOLS(data, z, degree)
+        elif method == "Ridge":
+            beta = ScikitSolverRidge(data, z)
         for j in range (0, degree+1):
             betaBundle[j][i] = beta[j]
     for i in range (0,degree+1):
@@ -139,10 +157,21 @@ print("########################################")
 #print(" ============== Naive OSL ============= ")
 #NaiveSolverOLS(z, data, data_n, x_n, y_n)
 print(' =============== Naive ConfidentIntervalBeta ==============') 
+#print ('Number of experiments is ', Experiments) 
+#method = "OLS"
+#print ('Method is ', method)
+#ConfidentIntervalBeta(Experiments, N, degree, method)
+#method = "Ridge"
+#print ('Method is ', method)
+#ConfidentIntervalBeta(Experiments, N, degree, method)
+
+print(' =============== SciKit ConfidentIntervalBeta ==============') 
 print ('Number of experiments is ', Experiments) 
 method = "OLS"
 print ('Method is ', method)
-ConfidentIntervalBeta(Experiments, N, degree, method)
+ConfidentIntervalBetaSKI(Experiments, N, degree, method)
 method = "Ridge"
 print ('Method is ', method)
-ConfidentIntervalBeta(Experiments, N, degree, method)
+ConfidentIntervalBetaSKI(Experiments, N, degree, method) 
+ 
+
