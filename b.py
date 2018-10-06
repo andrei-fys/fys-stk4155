@@ -26,6 +26,7 @@ def ScikitSolverOLS(data, z, degree, noise):
     print('Coefficient beta : \n', clf5.coef_)
     #print(cross_val_score(clf5, data, z, cv=5)) 
     scores = cross_val_score(clf5, data, z, cv=5)
+    print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
     print(scores.mean()) 
     print(scores.std()) 
 
