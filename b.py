@@ -8,7 +8,7 @@ import numpy as np
 from random import random, seed
 from sklearn.linear_model import LinearRegression,RidgeCV,Lasso, Ridge
 from sklearn.metrics import mean_squared_error, r2_score
-from Franke import FrankeFunction, SetUpDesignMat, SetUpGrid
+from Franke1 import FrankeFunction, SetUpDesignMat, SetUpGrid
 
 def ScikitSolverOLS(data, z, degree):
     clf5 = LinearRegression(fit_intercept=False)
