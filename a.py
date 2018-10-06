@@ -54,11 +54,11 @@ def NaiveSolverRidge(data, z, x_n, y_n, data_n, degree):
     lambda_parameter = 0.1
     beta = np.linalg.inv(data.T.dot(data) + lambda_parameter*I).dot(data.T).dot(z)
     zpredict = data_n.dot(beta)
-    print('Coefficient beta naive Ridge: \n', beta.reshape(1,-1))
-    print('Mean naive ', Mean(z))
-    print('R2 naive ', R2(z, zpredict))
-    print('MSE naive  ', MSE(z, zpredict))
-    return beta
+    #print('Coefficient beta naive Ridge: \n', beta.reshape(1,-1))
+    #print('Mean naive ', Mean(z))
+    #print('R2 naive ', R2(z, zpredict))
+    #print('MSE naive  ', MSE(z, zpredict))
+    return beta.reshape(1,-1)
 
 
 def Mean(y):
@@ -97,14 +97,19 @@ def SetUpData(N, degree):
     data_n = SetUpDesignMat(x_n,y_n,N,degree)
     return z, data, data_n, x_n, y_n
 
-def ConfidentIntervalBeta(Experiments, N, degree):
+def ConfidentIntervalBeta(Experiments, N, degree, method):
     betaBundle = np.zeros(shape=(degree+1,Experiments))
     for i in range (0, Experiments):
         z, data, data_n, x_n, y_n = SetUpData(N,degree)
-        beta = NaiveSolverOLS(z, data, data_n, x_n, y_n)
-        for j in range (0,degree+1):
+        if method == "OLS":
+            beta = NaiveSolverOLS(z, data, data_n, x_n, y_n)
+        elif method == "Ridge":
+            beta = NaiveSolverRidge(data, z, x_n, y_n, data_n, degree)
+            beta = beta.reshape(-1,1)
+        for j in range (0, degree+1):
             betaBundle[j][i] = beta[j]
     for i in range (0,degree+1):
+        print ('Variance for beta_{0} is {1}' .format(i, np.var(betaBundle[i][:])))
         print ('Confindent interval for beta_{0} : [ {1} ; {2} ]' .format(i, Mean(betaBundle[i][:]) - 2*np.std(betaBundle[i][:]),  Mean(betaBundle[i][:]) + 2*np.std(betaBundle[i][:])))
 
 
@@ -112,7 +117,7 @@ def ConfidentIntervalBeta(Experiments, N, degree):
 N = 500
 
 # Poly degree
-degree = 4
+degree = 5
 
 # Interval
 Experiments = 10
@@ -123,15 +128,21 @@ y_exact = np.arange(0, 1, 0.05)
 
 z, data, data_n, x_n, y_n = SetUpData(N,degree)
 print("########################################")
-print("Scikit OSL: ")
-ScikitSolverOLS(data, z, degree)
-print(' ============== Scikit Lasso ============')
-ScikitSolverLasso(data, z)
-print(' ============== Scikit Ridge ============')
-ScikitSolverRidge(data, z)
-print(' ============== Naive Ridge ============') 
-NaiveSolverRidge(data, z, x_n, y_n, data_n, degree)
-print(" ============== Naive OSL ============= ")
-NaiveSolverOLS(z, data, data_n, x_n, y_n)
-print(' =============== Naive OLS ConfidentIntervalBeta ==============')  
-ConfidentIntervalBeta(Experiments, N, degree)
+#print("Scikit OSL: ")
+#ScikitSolverOLS(data, z, degree)
+#print(' ============== Scikit Lasso ============')
+#ScikitSolverLasso(data, z)
+#print(' ============== Scikit Ridge ============')
+#ScikitSolverRidge(data, z)
+#print(' ============== Naive Ridge ============') 
+#NaiveSolverRidge(data, z, x_n, y_n, data_n, degree)
+#print(" ============== Naive OSL ============= ")
+#NaiveSolverOLS(z, data, data_n, x_n, y_n)
+print(' =============== Naive ConfidentIntervalBeta ==============') 
+print ('Number of experiments is ', Experiments) 
+method = "OLS"
+print ('Method is ', method)
+ConfidentIntervalBeta(Experiments, N, degree, method)
+method = "Ridge"
+print ('Method is ', method)
+ConfidentIntervalBeta(Experiments, N, degree, method)
