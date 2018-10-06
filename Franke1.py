@@ -33,7 +33,7 @@ def FrankeFunction(x,y):
 
 
 def SetUpDesignMat(x,y,N,degree):
-    switcher = {1: one(x,y,N), 2: two(x,y,N), 3: three(x,y,N), 4: four(x,y,N), 5: five(x,y,N)}
+    switcher = {1: one(x,y,N), 2: two(x,y,N), 3: three(x,y,N), 4: four(x,y,N), 5: five(x,y,N), 6: six(x,y,N), 7: seven(x,y,N), 8: eight(x,y,N), 9: nine(x,y,N)}
     polynomial = switcher.get(degree, lambda: "Invalid degree")
     return polynomial
 
@@ -72,6 +72,54 @@ def five(x,y,N):
     degree_five = x**5 + 5*x**4*y + 10*x**3*y**2 + 10*x**2*y**3 + 5*y**4*x + y**5
     return  np.hstack([np.ones((N*N,1)), degree_one, degree_two, degree_three, degree_four, degree_five])
 
+def six(x,y,N):
+    assert len(x)==len(y)
+    degree_one = x + y
+    degree_two = x**2 + 2*x*y + y**2
+    degree_three = x**3 + 3*x**2*y + 3*y**2*x + y**3
+    degree_four = x**4 + 4*x**3*y + 6*x**2*y**2 + 4*y**3*x + y**4
+    degree_five = x**5 + 5*x**4*y + 10*x**3*y**2 + 10*x**2*y**3 + 5*y**4*x + y**5
+    degree_six = x**6 + x**5*y + x**4*y**2 + x**3*y**3 +x**2*y**4 + x*y**5 + y**6
+    return  np.hstack([np.ones((N*N,1)), degree_one, degree_two, degree_three, degree_four, degree_five, degree_six])
+
+
+def seven(x,y,N):
+    assert len(x)==len(y)
+    degree_one = x + y
+    degree_two = x**2 + 2*x*y + y**2
+    degree_three = x**3 + 3*x**2*y + 3*y**2*x + y**3
+    degree_four = x**4 + 4*x**3*y + 6*x**2*y**2 + 4*y**3*x + y**4
+    degree_five = x**5 + 5*x**4*y + 10*x**3*y**2 + 10*x**2*y**3 + 5*y**4*x + y**5
+    degree_six = x**6 + x**5*y + x**4*y**2 + x**3*y**3 +x**2*y**4 + x*y**5 + y**6
+    degree_seven = x**7 + x**6*y + x**5*y**2 + x**4*y**3 +x**3*y**4 + x**2*y**5 + x*y**6 + y**7 
+    return  np.hstack([np.ones((N*N,1)), degree_one, degree_two, degree_three, degree_four, degree_five, degree_six, degree_seven])
+
+
+
+def eight(x,y,N):
+    assert len(x)==len(y)
+    degree_one = x + y
+    degree_two = x**2 + 2*x*y + y**2
+    degree_three = x**3 + 3*x**2*y + 3*y**2*x + y**3
+    degree_four = x**4 + 4*x**3*y + 6*x**2*y**2 + 4*y**3*x + y**4
+    degree_five = x**5 + 5*x**4*y + 10*x**3*y**2 + 10*x**2*y**3 + 5*y**4*x + y**5
+    degree_six = x**6 + x**5*y + x**4*y**2 + x**3*y**3 +x**2*y**4 + x*y**5 + y**6
+    degree_seven = x**7 + x**6*y + x**5*y**2 + x**4*y**3 +x**3*y**4 + x**2*y**5 + x*y**6 + y**7 
+    degree_eight = x**8 + x**7*y + x**6*y**2 + x**5*y**3 +x**4*y**4 + x**3*y**5 + x**2*y**6 + x*y**7 +y**8
+    return  np.hstack([np.ones((N*N,1)), degree_one, degree_two, degree_three, degree_four, degree_five, degree_six, degree_seven, degree_eight])
+
+def nine(x,y,N):
+    assert len(x)==len(y)
+    degree_one = x + y
+    degree_two = x**2 + 2*x*y + y**2
+    degree_three = x**3 + 3*x**2*y + 3*y**2*x + y**3
+    degree_four = x**4 + 4*x**3*y + 6*x**2*y**2 + 4*y**3*x + y**4
+    degree_five = x**5 + 5*x**4*y + 10*x**3*y**2 + 10*x**2*y**3 + 5*y**4*x + y**5
+    degree_six = x**6 + x**5*y + x**4*y**2 + x**3*y**3 +x**2*y**4 + x*y**5 + y**6
+    degree_seven = x**7 + x**6*y + x**5*y**2 + x**4*y**3 +x**3*y**4 + x**2*y**5 + x*y**6 + y**7 
+    degree_eight = x**8 + x**7*y + x**6*y**2 + x**5*y**3 +x**4*y**4 + x**3*y**5 + x**2*y**6 + x*y**7 +y**8
+    degree_nine = x**9 + x**8*y + x**7*y**2 + x**6*y**3 +x**5*y**4 + x**4*y**5 + x**3*y**6 + x**2*y**7 +x*y**8 + y**9
+    return  np.hstack([np.ones((N*N,1)), degree_one, degree_two, degree_three, degree_four, degree_five, degree_six, degree_seven, degree_eight, degree_nine])
 
 def SetUpGrid(N,noise):    
     x = np.sort(np.random.uniform(0,1,N))

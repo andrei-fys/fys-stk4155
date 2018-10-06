@@ -9,6 +9,7 @@ from random import random, seed
 from sklearn.linear_model import LinearRegression,RidgeCV,Lasso, Ridge
 from sklearn.metrics import mean_squared_error, r2_score
 from Franke1 import FrankeFunction, SetUpDesignMat, SetUpGrid
+from sklearn.model_selection import cross_val_score
 
 def ScikitSolverOLS(data, z, degree, noise):
     clf5 = LinearRegression(fit_intercept=False)
@@ -23,6 +24,10 @@ def ScikitSolverOLS(data, z, degree, noise):
     print('R2 SciKit', R2)
     print('MSE SciKit  ',MSE)
     print('Coefficient beta : \n', clf5.coef_)
+    #print(cross_val_score(clf5, data, z, cv=5)) 
+    scores = cross_val_score(clf5, data, z, cv=5)
+    print(scores.mean()) 
+    print(scores.std()) 
 
 def ScikitSolverRidge(data, z):
     #ridge=RidgeCV(alphas=[0.1,1.0,10.0])
@@ -146,9 +151,10 @@ z, data, data_n, x_n, y_n = SetUpData(N,degree,noise)
 #ConfidentIntervalBeta(Experiments, N, degree, noise)
 
 
-print(degree, noise, end='',flush=True)
-NaiveSolverOLS(z, data, data_n, x_n, y_n)
-ConfidentIntervalBeta(Experiments, N, degree, noise)
+#print(degree, noise, end='',flush=True)
+#NaiveSolverOLS(z, data, data_n, x_n, y_n)
+#ConfidentIntervalBeta(Experiments, N, degree, noise)
 
+ScikitSolverOLS(data, z, degree, noise)
 
 
