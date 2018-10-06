@@ -1,0 +1,52 @@
+\documentclass[10pt]{article}
+\usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{flexisym}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{amsthm}
+\usepackage{subcaption}
+\newtheorem*{theorem}{Theorem}
+\newtheorem{defn}{Definition}
+\begin{document}
+\setlength\parindent{1pt}
+\title{Data Analysis and Machine Learning \\
+Project1.\\ Regression analysis and re-sampling methods}
+\author{Andrei Kukharenka, Anton Fofanov and Anna Gribkovskaya \\  
+FYS-STK 4155 
+}
+
+\maketitle
+\begin{abstract}
+some abstract
+\end{abstract}
+\clearpage 
+
+
+\section{Introduction}
+
+
+\section{General description of the linear regression methods}
+Regression analysis is a powerful tool to analyze the data. Let's start with some definitions needed to understand how it works.
+\begin{defn}
+Variables $\hat{x} = [x_0,x_1, x_2,\dots, x_{n-1}]^T,$ are called independent  or explanatory variable. Here $n$ is number of samples measured.
+\end{defn}
+
+\begin{defn}
+	Variables  $\hat{y} = [y_0,y_1, y_2,\dots, y_{n-1}]^T,$ are called dependent or response variable. Here $n$ is number of samples measured.
+\end{defn}
+The aim of the regression is to estimate the relationship between $\hat{x}$ and $\hat{y}$ variables in order to make predictions and find functional dependences. \\
+Let's assume we measure a set of parameters for each sample. Number of parameters is denoted by $p$. In this case instead for vector we would get a matrix $\textbf{X}$ and $\textbf{Y}$. Matrix $\textbf{X}$ is called \textbf{design matrix} and matrix $\textbf{Y}$ is \textbf{response matrix}. Goal of regression analysis is to determine the functional dependence between $\textbf{X}$ and $\textbf{Y}$ or one may say explain one in terms of the other. Here we have no knowledge on the function is available in advance. However one may assume the function to be linear with respect to some unknown parameters $\beta = (\beta_1, \ldots, \beta_p)^{\top}$.Such assumption leads to so called \textbf{linear regression} and set of $\beta$  are \textbf{regression parameters}. There are many types of linear regressions and in the sections below we are going to describe some of them.
+\subsection{Ordinary Least Squared}
+
+\subsection{Ridge}
+
+\subsection{Lasso}
+
+
+
+
+\end{document}
