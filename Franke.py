@@ -16,20 +16,62 @@ def FrankeFunction(x,y):
     term4 = -0.2*np.exp(-(9*x-4)**2 - (9*y-7)**2)
     return term1 + term2 + term3 + term4
 
-def SetUpDesignMat(x,y,N):
-    "Set up matrix for the polynomial approximation	"
+#def SetUpDesignMat(x,y,N,degree):
+#    "Set up matrix for the polynomial approximation	"
+#    assert len(x)==len(y)
+#    # Degree 1
+#    degree_one = x + y
+#    # Degree 2
+#    degree_two = x**2 + 2*x*y + y**2
+#    #Degree 3
+#    degree_three = x**3 + 3*x**2*y + 3*y**2*x + y**3
+#    # Degree 4
+#    degree_four = x**4 + 4*x**3*y + 6*x**2*y**2 + 4*y**3*x + y**4
+#    # Degree 5
+#    degree_five = x**5 + 5*x**4*y + 10*x**3*y**2 + 10*x**2*y**3 + 5*y**4*x + y**5
+#    return  np.hstack([np.ones((N*N,1)), degree_one, degree_two, degree_three, degree_four, degree_five])
+
+
+def SetUpDesignMat(x,y,N,degree):
+    switcher = {1: one(x,y,N), 2: two(x,y,N), 3: three(x,y,N), 4: four(x,y,N), 5: five(x,y,N)}
+    polynomial = switcher.get(degree, lambda: "Invalid degree")
+    return polynomial
+
+def one(x,y,N):
     assert len(x)==len(y)
-    # Degree 1
     degree_one = x + y
-    # Degree 2
+    return np.hstack([np.ones((N*N,1)), degree_one])
+
+def two(x,y,N):
+    assert len(x)==len(y)
+    degree_one = x + y
     degree_two = x**2 + 2*x*y + y**2
-    #Degree 3
+    return np.hstack([np.ones((N*N,1)), degree_one, degree_two])
+
+def three(x,y,N):
+    assert len(x)==len(y)
+    degree_one = x + y
+    degree_two = x**2 + 2*x*y + y**2
     degree_three = x**3 + 3*x**2*y + 3*y**2*x + y**3
-    # Degree 4
+    return np.hstack([np.ones((N*N,1)), degree_one, degree_two, degree_three])
+
+def four(x,y,N):
+    assert len(x)==len(y)
+    degree_one = x + y
+    degree_two = x**2 + 2*x*y + y**2
+    degree_three = x**3 + 3*x**2*y + 3*y**2*x + y**3
     degree_four = x**4 + 4*x**3*y + 6*x**2*y**2 + 4*y**3*x + y**4
-    # Degree 5
+    return  np.hstack([np.ones((N*N,1)), degree_one, degree_two, degree_three, degree_four])
+
+def five(x,y,N):
+    assert len(x)==len(y)
+    degree_one = x + y
+    degree_two = x**2 + 2*x*y + y**2
+    degree_three = x**3 + 3*x**2*y + 3*y**2*x + y**3
+    degree_four = x**4 + 4*x**3*y + 6*x**2*y**2 + 4*y**3*x + y**4
     degree_five = x**5 + 5*x**4*y + 10*x**3*y**2 + 10*x**2*y**3 + 5*y**4*x + y**5
     return  np.hstack([np.ones((N*N,1)), degree_one, degree_two, degree_three, degree_four, degree_five])
+
 
 def SetUpGrid(N):    
     x = np.sort(np.random.uniform(0,1,N))
@@ -43,19 +85,19 @@ def SetUpGrid(N):
     return x, y
 	
 
-def OSL(N):
+def OSL(N,degree):
     x, y = SetUpGrid(N)
     z = FrankeFunction(x,y)
     x = x.reshape(-1, 1)
     y = y.reshape(-1, 1)
     z = z.reshape(N*N,1)
-    data = SetUpDesignMat(x,y,N)
+    data = SetUpDesignMat(x,y,N,degree)
     LinearReg = LinearRegression()
     LinearReg.fit(data,z)
     x_n, y_n = SetUpGrid(N)
     x_n = x_n.reshape(-1, 1)
     y_n = y_n.reshape(-1, 1)
-    data_n = SetUpDesignMat(x_n,y_n,N)
+    data_n = SetUpDesignMat(x_n,y_n,N,degree)
     z_n = LinearReg.predict(data_n)
     R2 = LinearReg.score(data_n, z.reshape(-1, 1))
     MSE = mean_squared_error(z.reshape(-1, 1), z_n)
@@ -68,23 +110,23 @@ def OSL(N):
 
 
 
-#fig = plt.figure()
-#ax = fig.gca(projection='3d')
-# Make data.
-#x_exact = np.arange(0, 1, 0.05)
-#y_exact = np.arange(0, 1, 0.05)
-#N = 500
-
-#z = FrankeFunction(x_exact, y_exacti) 
-## Plot the surface.
-#surf = ax.plot_surface(x, y, z, cmap=cm.coolwarm,
-#linewidth=0, antialiased=False)
-## Customize the z axis.
-#ax.set_zlim(-0.10, 1.40)
-#ax.zaxis.set_major_locator(LinearLocator(10))
-#ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
-## Add a color bar which maps values to colors.
-#fig.colorbar(surf, shrink=0.5, aspect=5)
-#plt.show()
 if __name__ == '__main__':
-    OSL(20)
+    fig = plt.figure()
+    ax = fig.gca(projection='3d')
+    # Make data.
+    x_exact = np.arange(0, 1, 0.05)
+    y_exact = np.arange(0, 1, 0.05)
+    N = 500
+    
+    z = FrankeFunction(x_exact, y_exact) 
+    # Plot the surface.
+    surf = ax.plot_surface(x_exact, y_exact, z, cmap=cm.coolwarm,
+    linewidth=0, antialiased=False)
+    # Customize the z axis.
+    ax.set_zlim(-0.10, 1.40)
+    ax.zaxis.set_major_locator(LinearLocator(10))
+    ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
+    # Add a color bar which maps values to colors.
+    fig.colorbar(surf, shrink=0.5, aspect=5)
+    plt.show()
+#    OSL(20)
