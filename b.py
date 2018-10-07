@@ -6,6 +6,7 @@
 import sys
 import numpy as np
 from random import random, seed
+import sklearn.model_selection
 from sklearn.linear_model import LinearRegression,RidgeCV,Lasso, Ridge
 from sklearn.metrics import mean_squared_error, r2_score
 from Franke1 import FrankeFunction, SetUpDesignMat, SetUpGrid
@@ -121,17 +122,39 @@ def ConfidentIntervalBeta(Experiments, N, degree, noise):
 
 
 def kFoldCV(N,degree,noise):
-    N,degree,noise = N,degree,noise
-    ''' this is test. AN example of how the KFold works '''
-    from sklearn.cross_validation import KFold
 
-    kf = KFold(25, n_folds=5, shuffle=True)
-    print('{} {:^61} {}'.format('Iteration', 'Training set obsevations', 'Testing set observations'))
-    for iteration, data in enumerate(kf, start=1):
-        print('{!s:^9} {} {!s:^25}'.format(iteration, data[0], data[1]))
-    ''' Test is working correct '''
-    z, data, data_n, x_n, y_n = SetUpData(N,degree,noise)
-    #kf = KFold(data, n_folds=5, shuffle=False)
+    x,y = SetUpGrid(N,noise)
+    z = FrankeFunction(x,y)
+    zpredict = []
+    XY_train, XY_test, z_train, z_test = sklearn.model_selection.train_test_split(np.c_[x.ravel(), y.ravel()], z.ravel(), test_size=0.4)
+    KFold = sklearn.model_selection.KFold(n_splits=4)  
+    for train, test in KFold.split(XY_train):
+        xy_kf_train, xy_kf_test = XY_train[train], XY_train[test]
+        z_kf_train, z_kf_test = z_train[train], z_train[test]
+        kfLinReg = LinearRegression(fit_intercept=False)
+        kfLinReg.fit(xy_kf_train, z_kf_train)
+        zpredict.append(kfLinReg.predict(XY_test))
+
+    zpredict = np.asarray(zpredict)
+
+    # MSE
+    mse_current = (z_test - zpredict)**2
+    MSE_mean = np.mean(np.mean(mse_current, axis=0, keepdims=True))
+
+    # Bias, (y - mean(y_approx))^2
+    predict_mean = np.mean(zpredict, axis=0, keepdims=True)
+    bias = np.mean((z_test - predict_mean)**2)
+
+    #R2
+    #R2 = 
+
+    # Variance 
+    var = np.mean(np.var(zpredict, axis=0, keepdims=True))
+    print('MSE = ', MSE_mean)
+    print('Bias^2 = ', bias)
+    print('Variance  = ', var)
+    print('|MSE - bias - variance| = ', abs(MSE_mean - bias - var))
+
 
 
 #Number of grid points in one dim
