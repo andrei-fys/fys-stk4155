@@ -163,6 +163,20 @@ def ScikitSolverRidgeCV(N, degree, noise):
     ridge.fit(X_train,y_train)
     print(ridge.score(X_test, y_test))
 
+def ScikitSolverLassoCV(N, degree, noise):
+    z, data, _, _, _, _, _ = SetUpData(N,degree,noise)
+    X_train, X_test, y_train, y_test = train_test_split(data, z, test_size=0.2, random_state=0)
+    lasso=Lasso(alpha=0.1, fit_intercept=False)
+    lasso.fit(X_train,y_train)
+    print(lasso.score(X_test, y_test))
+
+def ScikitSolverOSLCV(N, degree, noise):
+    z, data, _, _, _, _, _ = SetUpData(N,degree,noise)
+    X_train, X_test, y_train, y_test = train_test_split(data, z, test_size=0.2, random_state=0)
+    OSL=LinearRegression( fit_intercept=False)
+    OSL.fit(X_train,y_train)
+    print(OSL.score(X_test, y_test))
+
 
 #Number of grid points in one dim
 N = 100
@@ -184,28 +198,6 @@ resampling = True
 x_exact = np.arange(0, 1, 0.05)
 y_exact = np.arange(0, 1, 0.05)
 
-#z, data, data_n, x_n, y_n, x, y = SetUpData(N,degree,noise)
-
-#print("########################################")
-#print("Scikit OSL: ")
-#ScikitSolverOLS(data, z, degree, noise)
-#print(' ============== Scikit Lasso ============')
-#ScikitSolverLasso(data, z)
-#print(' ============== Scikit Ridge ============')
-#ScikitSolverRidge(data, z)
-#print(' ============== Naive Ridge ============') 
-#NaiveSolverRidge(data, z, x_n, y_n, data_n, degree)
-#print(" ============== Naive OSL ============= ")
-#NaiveSolverOLS(z, data, data_n, x_n, y_n)
-#print(' =============== Naive OLS ConfidentIntervalBeta ==============')  
-#ConfidentIntervalBeta(Experiments, N, degree, noise)
-
-
-#print(degree, noise, end='',flush=True)
-#NaiveSolverOLS(z, data, data_n, x_n, y_n)
-#ConfidentIntervalBeta(Experiments, N, degree, noise)
-
-#ScikitSolverOLS(data, z, degree, noise)
 print("########################################")
 kFoldCV(N,degree,noise)
 print("########################################")
@@ -215,6 +207,12 @@ print("########################################")
 NaiveSolverRidge(N,degree,noise)
 print("########################################")
 ScikitSolverRidgeCV(N, degree, noise)
+print ("################## CV OSL ######################")
+ScikitSolverOSLCV(N, degree, noise)
+print ("################# CV Ridge #######################")
+ScikitSolverRidgeCV(N, degree, noise)
+print ("################# CV Lasso #######################")
+ScikitSolverLassoCV(N, degree, noise)
 
 
 
