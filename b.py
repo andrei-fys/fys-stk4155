@@ -120,15 +120,18 @@ def ConfidentIntervalBeta(Experiments, N, degree, noise):
         print ('Confindent interval for beta_{0} : [ {1} ; {2} ]' .format(i, Mean(betaBundle[i][:]) - 2*np.std(betaBundle[i][:]),  Mean(betaBundle[i][:]) + 2*np.std(betaBundle[i][:])))
 
 
-def kFoldCV():
+def kFoldCV(N,degree,noise):
+    N,degree,noise = N,degree,noise
     ''' this is test. AN example of how the KFold works '''
-    from sklearn.model_selection import KFold
+    from sklearn.cross_validation import KFold
 
-    kf = KFold(25, n_folds=5, shuffle=False)
+    kf = KFold(25, n_folds=5, shuffle=True)
     print('{} {:^61} {}'.format('Iteration', 'Training set obsevations', 'Testing set observations'))
     for iteration, data in enumerate(kf, start=1):
         print('{!s:^9} {} {!s:^25}'.format(iteration, data[0], data[1]))
     ''' Test is working correct '''
+    z, data, data_n, x_n, y_n = SetUpData(N,degree,noise)
+    #kf = KFold(data, n_folds=5, shuffle=False)
 
 
 #Number of grid points in one dim
@@ -173,6 +176,6 @@ z, data, data_n, x_n, y_n = SetUpData(N,degree,noise)
 #ConfidentIntervalBeta(Experiments, N, degree, noise)
 
 #ScikitSolverOLS(data, z, degree, noise)
-kFoldCV()
+kFoldCV(N,degree,noise)
 
 
