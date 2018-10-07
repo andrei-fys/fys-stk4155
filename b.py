@@ -25,27 +25,30 @@ def ScikitSolverOLS(N, degree, noise):
     predict = cross_val_predict(clf5, data, z, cv=20)
     
     #print(cross_val_score(clf5, data, z, cv=5)) 
-    print ('CV start here ')
-    print ('R2 cross-valid ', r2_score(predict, z))
-    scores = cross_val_score(clf5, data, z, cv=15)
+    #print ('CV start here ')
+    #print ('R2 cross-valid ', r2_score(predict, z))
+    #scores = cross_val_score(clf5, data, z, cv=15)
     #print ('Scores ', scores)
-    print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
-    print('MEAN ', scores.mean()) 
-    print('STD ',scores.std()) 
+    #print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+    #print('MEAN ', scores.mean()) 
+    #print('STD ',scores.std()) 
 
 def ScikitSolverRidge(N,degree,noise):
-    z, data, _, _, _, _, _ = SetUpData(N,degree,noise)
+    z, data, data_n, _, _, _, _ = SetUpData(N,degree,noise)
     #ridge=RidgeCV(alphas=[0.1,1.0,10.0])
     ridge=Ridge(alpha=0.1, fit_intercept=False)
     ridge.fit(data,z)
+    R2 = ridge.score(data_n, z)
     print("Ridge Coefficient: ",ridge.coef_)
     print("Ridge Intercept: ", ridge.intercept_)
     
 def ScikitSolverLasso(N,degree,noise):
-    z, data, _, _, _, _, _ = SetUpData(N,degree,noise)
+    z, data, data_n, _, _, _, _ = SetUpData(N,degree,noise)
     lasso=Lasso(alpha=0.1)
     lasso.fit(data,z)
     predl=lasso.predict(data)
+    R2 = lasso.score(data_n, z)
+    print('R2 SciKit', R2)
     print("Lasso Coefficient: ", lasso.coef_)
     print("Lasso Intercept: ", lasso.intercept_)
 
@@ -161,6 +164,9 @@ def ScikitSolverRidgeCV(N, degree, noise):
     X_train, X_test, y_train, y_test = train_test_split(data, z, test_size=0.2, random_state=0)
     ridge=Ridge(alpha=0.1, fit_intercept=False)
     ridge.fit(X_train,y_train)
+    y_predict = ridge.predict(X_test)
+    R_2 = R2(y_test, y_predict)
+    print ('R2: ', R_2)
     print(ridge.score(X_test, y_test))
 
 def ScikitSolverLassoCV(N, degree, noise):
@@ -168,6 +174,9 @@ def ScikitSolverLassoCV(N, degree, noise):
     X_train, X_test, y_train, y_test = train_test_split(data, z, test_size=0.2, random_state=0)
     lasso=Lasso(alpha=0.1, fit_intercept=False)
     lasso.fit(X_train,y_train)
+    y_predict = lasso.predict(X_test)
+    R_2 = R2(y_test, y_predict)
+    print ('R2: ', R_2)
     print(lasso.score(X_test, y_test))
 
 def ScikitSolverOSLCV(N, degree, noise):
@@ -175,6 +184,9 @@ def ScikitSolverOSLCV(N, degree, noise):
     X_train, X_test, y_train, y_test = train_test_split(data, z, test_size=0.2, random_state=0)
     OSL=LinearRegression( fit_intercept=False)
     OSL.fit(X_train,y_train)
+    y_predict = OSL.predict(X_test)
+    R_2 = R2(y_test, y_predict)
+    print ('R2: ', R_2)
     print(OSL.score(X_test, y_test))
 
 
@@ -198,21 +210,28 @@ resampling = True
 x_exact = np.arange(0, 1, 0.05)
 y_exact = np.arange(0, 1, 0.05)
 
-print("########################################")
-kFoldCV(N,degree,noise)
-print("########################################")
+#print("########################################")
+#kFoldCV(N,degree,noise)
+#ScikitSolverRidge(N,degree,noise)
+#print("########################################")
+#NaiveSolverRidge(N,degree,noise)
+#print("########################################")
+#ScikitSolverRidgeCV(N, degree, noise)
+print("############ OSL SciKit #########################")
 ScikitSolverOLS(N, degree, noise)
-ScikitSolverRidge(N,degree,noise)
-print("########################################")
-NaiveSolverRidge(N,degree,noise)
-print("########################################")
-ScikitSolverRidgeCV(N, degree, noise)
 print ("################## CV OSL ######################")
 ScikitSolverOSLCV(N, degree, noise)
-print ("################# CV Ridge #######################")
+
+print ('=============== Ridge SciKit ===================')
+ScikitSolverRidge(N, degree, noise)
+print ('=============== Ridge CV =======================')
 ScikitSolverRidgeCV(N, degree, noise)
-print ("################# CV Lasso #######################")
+
+print ('*************** Lasso Scikit *******************')
+ScikitSolverLasso(N, degree, noise)
+print ('*************** Lasso CV *******************')
 ScikitSolverLassoCV(N, degree, noise)
+
 
 
 
