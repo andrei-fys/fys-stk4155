@@ -21,8 +21,8 @@ def ScikitSolverOLS(N, degree, noise):
     MSE = mean_squared_error(z, z_n)
     print('R2 SciKit', R2)
     print('MSE SciKit  ',MSE)
-    print('Coefficient beta : \n', clf5.coef_)
-    predict = cross_val_predict(clf5, data, z, cv=20)
+    #print('Coefficient beta : \n', clf5.coef_)
+    #predict = cross_val_predict(clf5, data, z, cv=20)
     
     #print(cross_val_score(clf5, data, z, cv=5)) 
     #print ('CV start here ')
@@ -44,7 +44,7 @@ def ScikitSolverRidge(N,degree,noise):
     
 def ScikitSolverLasso(N,degree,noise):
     z, data, data_n, _, _, _, _ = SetUpData(N,degree,noise)
-    lasso=Lasso(alpha=0.1)
+    lasso=Lasso(alpha=0.2)
     lasso.fit(data,z)
     predl=lasso.predict(data)
     R2 = lasso.score(data_n, z)
@@ -165,9 +165,9 @@ def ScikitSolverRidgeCV(N, degree, noise):
     ridge=Ridge(alpha=0.1, fit_intercept=False)
     ridge.fit(X_train,y_train)
     y_predict = ridge.predict(X_test)
-    R_2 = R2(y_test, y_predict)
-    print ('R2: ', R_2)
-    print(ridge.score(X_test, y_test))
+    #R_2 = R2(y_test, y_predict)
+    #print ('R2: ', R_2)
+    print('R2: ',ridge.score(X_test, y_test))
 
 def ScikitSolverLassoCV(N, degree, noise):
     z, data, _, _, _, _, _ = SetUpData(N,degree,noise)
@@ -175,9 +175,9 @@ def ScikitSolverLassoCV(N, degree, noise):
     lasso=Lasso(alpha=0.1, fit_intercept=False)
     lasso.fit(X_train,y_train)
     y_predict = lasso.predict(X_test)
-    R_2 = R2(y_test, y_predict)
-    print ('R2: ', R_2)
-    print(lasso.score(X_test, y_test))
+    #R_2 = R2(y_test, y_predict)
+    #print ('R2: ', R_2)
+    print('R2: ', lasso.score(X_test, y_test))
 
 def ScikitSolverOSLCV(N, degree, noise):
     z, data, _, _, _, _, _ = SetUpData(N,degree,noise)
@@ -185,13 +185,13 @@ def ScikitSolverOSLCV(N, degree, noise):
     OSL=LinearRegression( fit_intercept=False)
     OSL.fit(X_train,y_train)
     y_predict = OSL.predict(X_test)
-    R_2 = R2(y_test, y_predict)
-    print ('R2: ', R_2)
-    print(OSL.score(X_test, y_test))
+    #R_2 = R2(y_test, y_predict)
+    #print ('R2: ', R_2)
+    print('R2: ', OSL.score(X_test, y_test))
 
 
 #Number of grid points in one dim
-N = 100
+N = 200
 
 # Poly degree
 #degree = 4
