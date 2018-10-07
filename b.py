@@ -9,7 +9,7 @@ from random import random, seed
 from sklearn.linear_model import LinearRegression,RidgeCV,Lasso, Ridge
 from sklearn.metrics import mean_squared_error, r2_score
 from Franke1 import FrankeFunction, SetUpDesignMat, SetUpGrid
-from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import cross_val_score, cross_val_predict, train_test_split
 
 def ScikitSolverOLS(data, z, degree, noise):
     clf5 = LinearRegression(fit_intercept=False)
@@ -24,11 +24,16 @@ def ScikitSolverOLS(data, z, degree, noise):
     print('R2 SciKit', R2)
     print('MSE SciKit  ',MSE)
     print('Coefficient beta : \n', clf5.coef_)
+    predict = cross_val_predict(clf5, data, z, cv=20)
+    
     #print(cross_val_score(clf5, data, z, cv=5)) 
-    scores = cross_val_score(clf5, data, z, cv=5)
+    print ('CV start here ')
+    print ('R2 cross-valid ', r2_score(predict, z.reshape(-1, 1)))
+    scores = cross_val_score(clf5, data, z, cv=15)
+    print ('Scores ', scores)
     print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
-    print(scores.mean()) 
-    print(scores.std()) 
+    print('MEAN ', scores.mean()) 
+    print('STD ',scores.std()) 
 
 def ScikitSolverRidge(data, z):
     #ridge=RidgeCV(alphas=[0.1,1.0,10.0])
@@ -115,8 +120,19 @@ def ConfidentIntervalBeta(Experiments, N, degree, noise):
         print ('Confindent interval for beta_{0} : [ {1} ; {2} ]' .format(i, Mean(betaBundle[i][:]) - 2*np.std(betaBundle[i][:]),  Mean(betaBundle[i][:]) + 2*np.std(betaBundle[i][:])))
 
 
+def kFoldCV():
+    ''' this is test. AN example of how the KFold works '''
+    from sklearn.model_selection import KFold
+
+    kf = KFold(25, n_folds=5, shuffle=False)
+    print('{} {:^61} {}'.format('Iteration', 'Training set obsevations', 'Testing set observations'))
+    for iteration, data in enumerate(kf, start=1):
+        print('{!s:^9} {} {!s:^25}'.format(iteration, data[0], data[1]))
+    ''' Test is working correct '''
+
+
 #Number of grid points in one dim
-N = 500
+N = 100
 
 # Poly degree
 #degree = 4
@@ -156,6 +172,7 @@ z, data, data_n, x_n, y_n = SetUpData(N,degree,noise)
 #NaiveSolverOLS(z, data, data_n, x_n, y_n)
 #ConfidentIntervalBeta(Experiments, N, degree, noise)
 
-ScikitSolverOLS(data, z, degree, noise)
+#ScikitSolverOLS(data, z, degree, noise)
+kFoldCV()
 
 
