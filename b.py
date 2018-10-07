@@ -126,8 +126,8 @@ def kFoldCV(N,degree,noise):
     x,y = SetUpGrid(N,noise)
     z = FrankeFunction(x,y)
     zpredict = []
-    XY_train, XY_test, z_train, z_test = sklearn.model_selection.train_test_split(np.c_[x.ravel(), y.ravel()], z.ravel(), test_size=0.4)
-    KFold = sklearn.model_selection.KFold(n_splits=4)  
+    XY_train, XY_test, z_train, z_test = sklearn.model_selection.train_test_split(np.c_[x.ravel(), y.ravel()], z.ravel(), test_size=0.5)
+    KFold = sklearn.model_selection.KFold(n_splits=5)  
     for train, test in KFold.split(XY_train):
         xy_kf_train, xy_kf_test = XY_train[train], XY_train[test]
         z_kf_train, z_kf_test = z_train[train], z_train[test]
