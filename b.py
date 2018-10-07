@@ -12,16 +12,13 @@ from sklearn.metrics import mean_squared_error, r2_score
 from Franke1 import FrankeFunction, SetUpDesignMat, SetUpGrid
 from sklearn.model_selection import cross_val_score, cross_val_predict, train_test_split
 
-def ScikitSolverOLS(data, z, degree, noise):
+def ScikitSolverOLS(N, degree, noise):
+    z, data, data_n, x_n, y_n, x, y = SetUpData(N,degree,noise)
     clf5 = LinearRegression(fit_intercept=False)
     clf5.fit(data,z)
-    x_n, y_n = SetUpGrid(N, noise)
-    x_n = x_n.reshape(-1, 1)
-    y_n = y_n.reshape(-1, 1)
-    data_n = SetUpDesignMat(x_n,y_n,N,degree)
     z_n = clf5.predict(data_n)
-    R2 = clf5.score(data_n, z.reshape(-1, 1))
-    MSE = mean_squared_error(z.reshape(-1, 1), z_n)
+    R2 = clf5.score(data_n, z)
+    MSE = mean_squared_error(z, z_n)
     print('R2 SciKit', R2)
     print('MSE SciKit  ',MSE)
     print('Coefficient beta : \n', clf5.coef_)
@@ -29,28 +26,31 @@ def ScikitSolverOLS(data, z, degree, noise):
     
     #print(cross_val_score(clf5, data, z, cv=5)) 
     print ('CV start here ')
-    print ('R2 cross-valid ', r2_score(predict, z.reshape(-1, 1)))
+    print ('R2 cross-valid ', r2_score(predict, z))
     scores = cross_val_score(clf5, data, z, cv=15)
-    print ('Scores ', scores)
+    #print ('Scores ', scores)
     print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
     print('MEAN ', scores.mean()) 
     print('STD ',scores.std()) 
 
-def ScikitSolverRidge(data, z):
+def ScikitSolverRidge(N,degree,noise):
+    z, data, _, _, _, _, _ = SetUpData(N,degree,noise)
     #ridge=RidgeCV(alphas=[0.1,1.0,10.0])
     ridge=Ridge(alpha=0.1, fit_intercept=False)
     ridge.fit(data,z)
     print("Ridge Coefficient: ",ridge.coef_)
     print("Ridge Intercept: ", ridge.intercept_)
     
-def ScikitSolverLasso(data, z):
+def ScikitSolverLasso(N,degree,noise):
+    z, data, _, _, _, _, _ = SetUpData(N,degree,noise)
     lasso=Lasso(alpha=0.1)
     lasso.fit(data,z)
     predl=lasso.predict(data)
     print("Lasso Coefficient: ", lasso.coef_)
     print("Lasso Intercept: ", lasso.intercept_)
 
-def NaiveSolverOLS(z, data, data_n, x_n, y_n):
+def NaiveSolverOLS(N,degree,noise):
+    z, data, data_n, x_n, y_n, _, _ = SetUpData(N,degree,noise)
     beta = np.linalg.inv(data.T.dot(data)).dot(data.T).dot(z)
     zpredict = data_n.dot(beta)
     #print('Coefficient beta naive: \n', beta.reshape(1,-1))
@@ -62,7 +62,8 @@ def NaiveSolverOLS(z, data, data_n, x_n, y_n):
     print(Mean(z), R2(z, zpredict), MSE(z, zpredict))
     return beta
 
-def NaiveSolverRidge(data, z, x_n, y_n, data_n, degree):
+def NaiveSolverRidge(N,degree,noise):
+    z, data, data_n, x_n, y_n, _, _ = SetUpData(N,degree,noise)
     I = np.identity(degree+1)	
     lambda_parameter = 0.1
     beta = np.linalg.inv(data.T.dot(data) + lambda_parameter*I).dot(data.T).dot(z)
@@ -108,12 +109,12 @@ def SetUpData(N, degree,noise):
     x_n = x_n.reshape(-1, 1)
     y_n = y_n.reshape(-1, 1)
     data_n = SetUpDesignMat(x_n,y_n,N,degree)
-    return z, data, data_n, x_n, y_n
+    return z, data, data_n, x_n, y_n, x, y
 
 def ConfidentIntervalBeta(Experiments, N, degree, noise):
     betaBundle = np.zeros(shape=(degree+1,Experiments))
     for i in range (0, Experiments):
-        z, data, data_n, x_n, y_n = SetUpData(N,degree,noise)
+        z, data, data_n, x_n, y_n, x, y = SetUpData(N,degree,noise)
         beta = NaiveSolverOLS(z, data, data_n, x_n, y_n)
         for j in range (0,degree+1):
             betaBundle[j][i] = beta[j]
@@ -126,8 +127,8 @@ def kFoldCV(N,degree,noise):
     x,y = SetUpGrid(N,noise)
     z = FrankeFunction(x,y)
     zpredict = []
-    XY_train, XY_test, z_train, z_test = sklearn.model_selection.train_test_split(np.c_[x.ravel(), y.ravel()], z.ravel(), test_size=0.5)
-    KFold = sklearn.model_selection.KFold(n_splits=5)  
+    XY_train, XY_test, z_train, z_test = sklearn.model_selection.train_test_split(np.c_[x.ravel(), y.ravel()], z.ravel(), test_size=0.2)
+    KFold = sklearn.model_selection.KFold(n_splits=15)  
     for train, test in KFold.split(XY_train):
         xy_kf_train, xy_kf_test = XY_train[train], XY_train[test]
         z_kf_train, z_kf_test = z_train[train], z_train[test]
@@ -155,6 +156,12 @@ def kFoldCV(N,degree,noise):
     print('Variance  = ', var)
     print('|MSE - bias - variance| = ', abs(MSE_mean - bias - var))
 
+def ScikitSolverRidgeCV(N, degree, noise):
+    z, data, _, _, _, _, _ = SetUpData(N,degree,noise)
+    X_train, X_test, y_train, y_test = train_test_split(data, z, test_size=0.2, random_state=0)
+    ridge=Ridge(alpha=0.1, fit_intercept=False)
+    ridge.fit(X_train,y_train)
+    print(ridge.score(X_test, y_test))
 
 
 #Number of grid points in one dim
@@ -177,7 +184,7 @@ resampling = True
 x_exact = np.arange(0, 1, 0.05)
 y_exact = np.arange(0, 1, 0.05)
 
-z, data, data_n, x_n, y_n = SetUpData(N,degree,noise)
+#z, data, data_n, x_n, y_n, x, y = SetUpData(N,degree,noise)
 
 #print("########################################")
 #print("Scikit OSL: ")
@@ -199,6 +206,15 @@ z, data, data_n, x_n, y_n = SetUpData(N,degree,noise)
 #ConfidentIntervalBeta(Experiments, N, degree, noise)
 
 #ScikitSolverOLS(data, z, degree, noise)
+print("########################################")
 kFoldCV(N,degree,noise)
+print("########################################")
+ScikitSolverOLS(N, degree, noise)
+ScikitSolverRidge(N,degree,noise)
+print("########################################")
+NaiveSolverRidge(N,degree,noise)
+print("########################################")
+ScikitSolverRidgeCV(N, degree, noise)
+
 
 
