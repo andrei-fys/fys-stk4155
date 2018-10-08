@@ -27,11 +27,14 @@ ADD SOME RESULTS HERE!!!!!
 \clearpage 
 
 
-\section{Introduction}
-Regression analysis is a widely used tool in data science. It incorporates many different techniques and models for estimating relations between variables. In this project we aim to study most widely used estimators - OSL, Ridge and Lasso.\\
-OSL regression is one of the most popular models here. It has been implemented in many software packages is various programming languages and is used by many data scientist everyday for performing analysis. In this project we aim to implement it from scratch in order to have a better understanding of its machinery.
+\section*{Introduction}
+Regression analysis is a widely used tool in data science. It incorporates many different techniques and models for estimating relations between variables. In this project we aim to study most widely used estimators - OSL, Ridge and Lasso.
+OSL regression is one of the most popular models here. It has been implemented in many software packages is various programming languages and is used by many data scientist everyday for performing analysis. In this project we aim to implement it from scratch in order to have a better understanding of its machinery. Rigde regression is also implemented from scratch here. \\
+A regression analysis aims to find the relations between various variables not only to explain or extract a functional dependency, but also to be able to predict outcomes for some unknown values of this variables. Here we need to be very careful with our model, because even if we were able to implement it with the smallest possible error and even hit all the variables provided for estimation of the relations, we can't be sure it will provide same good results when applied to the new set of data. The problem here is a possibility of over-fitting.In order to prevent this we use so-called re-sampling and cross-validation. In this project a k-fold cross validation have beed applied for all three methods. ADD SOME RESULTS HERE!!!\\
+Structure of the report:\\
+In section $\ref{Theory}$ we provide a brief theoretical review of the implemented models and re-sampling techniques.\\
 
-\section{General description of the linear regression methods}
+\section{General description of the linear regression methods} \label{Theory}
 Regression analysis is a powerful tool to analyze the data. Let's start with some definitions needed to understand how it works.
 \begin{defn}
 Variables $\hat{x} = [x_0,x_1, x_2,\dots, x_{n-1}]^T,$ are called independent  or explanatory variable. Here $n$ is number of samples measured.
@@ -48,12 +51,12 @@ Let's assume we measure a set of parameters for each sample. Number of parameter
 
 \subsection{Lasso}
 
-\subsection{Resampling methods}
+\subsection{Re-sampling methods}
 As we have already mention the main goal of regression analysis is to find the relations between the dependent and independent variables by estimating set of parameters. Once we have sampled the date and run the regression analysis we have obtained this parameters. However we only can do it once for a single data sample and can't predict how the model we have made will explain new data. The process of collecting data might also be expensive both in computational time and in real life currency, so one might need a recipe to avoid collecting more data and re-use the existing. Another problem here is so-called over-fitting. Regression analysis is base on the idea of prediction for the value based on some already known sets of variables and 
 
 
-\section{Results and discussion}
+\section{Results and discussion} \label{Results}
 
-\section{Conclusion}
+\section{Conclusion}\label{Conclusion}
 
 \end{document}
