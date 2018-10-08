@@ -19,19 +19,21 @@ def ScikitSolverOLS(N, degree, noise, z, data, data_n):
     z_n = clf5.predict(data_n)
     R2 = clf5.score(data_n, z)
     MSE = mean_squared_error(z, z_n)
-    print('R2 SciKit', R2)
-    print('MSE SciKit  ',MSE)
-    print('Coefficient beta : \n', clf5.coef_)
+    print("R2 SciKit %0.16f" % R2)
+    print("MSE SciKit %0.16f " % MSE)
+    #print('Coefficient beta : \n', clf5.coef_)
 
-    print ('!!!!!!!CV start here !!!!!!!')
-    predict = cross_val_predict(clf5, data, z, cv=5)
-    scores = cross_val_score(clf5, data, z, cv=5)
-    print('scores : ', scores) 
-    print ('R2 cross-valid ', r2_score(predict, z))
-    print ('Scores ', scores)
-    print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
-    print('MEAN ', scores.mean()) 
-    print('STD ',scores.std()) 
+    #print ('--------------------------------------------------------------')
+    #predict = cross_val_predict(clf5, data, z, cv=5)
+    #scores = cross_val_score(clf5, data, z, cv=5)
+    #print ( "R2 CV %0.16f" % r2_score(z, predict))
+    #print("MSE : %0.16f (+/- %0.16f)" % (scores.mean(), scores.std() * 2))
+    #print('scores : ', scores) 
+    #print ('R2 cross-valid ', r2_score(z, predict))
+    #print ('Scores ', scores)
+    #print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+    #print('MEAN ', scores.mean()) 
+    #print('STD ',scores.std()) 
 
 def ScikitSolverRidge(N,degree,noise, z, data, data_n):
     #z, data, data_n, _, _, _, _ = SetUpData(N,degree,noise)
@@ -59,11 +61,11 @@ def NaiveSolverOLS(N,degree,noise, z, data, data_n, x_n, y_n):
     #print('Coefficient beta naive: \n', beta.reshape(1,-1))
     beta = beta.reshape(-1,1)
     #print(' Beta0 ', beta[0])
-    #print('Mean naive ', Mean(z))
-    #print('R2 naive ', R2(z, zpredict))
-    #print('MSE naive  ', MSE(z, zpredict))
-    print(Mean(z), R2(z, zpredict), MSE(z, zpredict))
-    return beta
+    print("Mean naive %0.16f" % Mean(z))
+    print("R2 naive %0.16f" % R2(z, zpredict))
+    print("MSE naive %0.16f" % MSE(z, zpredict))
+    #print(Mean(z), R2(z, zpredict), MSE(z, zpredict))
+    #return beta
 
 def NaiveSolverRidge(N,degree,noise, z, data, data_n, x_n, y_n):
     #z, data, data_n, x_n, y_n, _, _ = SetUpData(N,degree,noise)
@@ -124,7 +126,7 @@ def ConfidentIntervalBeta(Experiments, N, degree, noise):
     for i in range (0,degree+1):
         print ('Confindent interval for beta_{0} : [ {1} ; {2} ]' .format(i, Mean(betaBundle[i][:]) - 2*np.std(betaBundle[i][:]),  Mean(betaBundle[i][:]) + 2*np.std(betaBundle[i][:])))
 
-'''
+
 def kFoldCV(N,degree,noise):
 
     x,y = SetUpGrid(N,noise)
@@ -158,7 +160,7 @@ def kFoldCV(N,degree,noise):
     print('Bias^2 = ', bias)
     print('Variance  = ', var)
     print('|MSE - bias - variance| = ', abs(MSE_mean - bias - var))
-'''
+
 def ScikitSolverRidgeCV(N, degree, noise, z, data):
     #z, data, _, _, _, _, _ = SetUpData(N,degree,noise)
     X_train, X_test, y_train, y_test = train_test_split(data, z, test_size=0.2, random_state=0)
@@ -219,23 +221,25 @@ z, data, data_n, x_n, y_n, x, y = SetUpData(N,degree,noise)
 #NaiveSolverRidge(N,degree,noise)
 #print("########################################")
 #ScikitSolverRidgeCV(N, degree, noise)
-print("############ OSL SciKit #########################")
+#print("############ OSL SciKit #########################")
+#ScikitSolverOLS(N, degree, noise, z, data, data_n)
+#print ("################## CV OSL ######################")
+#ScikitSolverOSLCV(N, degree, noise, z, data)
+#
+#print ('=============== Ridge SciKit ===================')
+#ScikitSolverRidge(N, degree, noise, z, data, data_n)
+#print ('=============== Ridge CV =======================')
+#ScikitSolverRidgeCV(N, degree, noise, z, data)
+#
+#print ('*************** Lasso Scikit *******************')
+#ScikitSolverLasso(N, degree, noise, z, data, data_n)
+#print ('*************** Lasso CV *******************')
+#ScikitSolverLassoCV(N, degree, noise, z, data)
+
+
 ScikitSolverOLS(N, degree, noise, z, data, data_n)
-print ("################## CV OSL ######################")
-ScikitSolverOSLCV(N, degree, noise, z, data)
 
-print ('=============== Ridge SciKit ===================')
-ScikitSolverRidge(N, degree, noise, z, data, data_n)
-print ('=============== Ridge CV =======================')
-ScikitSolverRidgeCV(N, degree, noise, z, data)
-
-print ('*************** Lasso Scikit *******************')
-ScikitSolverLasso(N, degree, noise, z, data, data_n)
-print ('*************** Lasso CV *******************')
-ScikitSolverLassoCV(N, degree, noise, z, data)
-
-
-
+#NaiveSolverOLS(N,degree,noise, z, data, data_n, x_n, y_n)
 
 
 
