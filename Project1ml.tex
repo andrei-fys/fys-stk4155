@@ -51,8 +51,19 @@ Let's assume we measure a set of parameters for each sample. Number of parameter
 
 \subsection{Lasso}
 
-\subsection{Re-sampling methods}
-As we have already mention the main goal of regression analysis is to find the relations between the dependent and independent variables by estimating set of parameters. Once we have sampled the date and run the regression analysis we have obtained this parameters. However we only can do it once for a single data sample and can't predict how the model we have made will explain new data. The process of collecting data might also be expensive both in computational time and in real life currency, so one might need a recipe to avoid collecting more data and re-use the existing. Another problem here is so-called over-fitting. Regression analysis is base on the idea of prediction for the value based on some already known sets of variables and 
+\subsection{Resampling methods}\label{resampling}
+As we have already mention the main goal of regression analysis is to find the relations between the dependent and independent variables by estimating set of parameters. Once we have sampled the date and run the regression analysis we have obtained this parameters. However we only can do it once for a single data sample and can't predict how the model we have made will explain new data. The process of collecting data might also be expensive both in computational time and in real life currency, so one might need a recipe to avoid collecting more data and re-use the existing. Another problem here is overfitting. If our model provides us an estimate that corresponds too close to the provided set of data (usually called training data) it might fail to predict the fit for any additional data (usually refereed to as testing data). Generally speaking resampling is a method that aims to improve the prediction accuracy of the model. This is achieved by implementing a very simple idea - splitting the data set into training and testing data. There many such methods for example k-fold cross-validation and bootstrapping. \\
+K-fold cross-validation require dividing the data set into a set of k-subsets (folds). After doing so one of the subsets is considered as a test one and the remaining ones are train data ($k-1$). This is done for all subsets, so that each of them has to be used as testing data, which means that the process should be repeated $k$ times. Bootstrapping is a bit different - test data set is selected once and used for every selection of the training data. Training data is selected randomly, by taking some values from data set with replacement. Random selection with replacement means that each value may appear multiple times in the one sample.
+ 
+\subsection{Bias-variance tradeoff}
+
+As it was mentioned in $\ref{resampling}$ overfitting is a problem we want to avoid. This many be done by reducing the complexity of the model. However, it may lead to another problem - underfitting, which is means that we are ignoring some important features of the train data. The problem of balancing these two is called bias-variance tradeoff or bias-variance dilemma. This is a well known problem in data analysis. Here high bias correspond to underfitting and high variance to overfitting. High bias usually means that the model is not complex enough and correspondingly high variance means that model is too complex. \\
+The higher complexity of the model means that we have better approximation and that lead to lower bias. However any real model has noise and higher approximation is not always good, as we want to avoid the influence of noise. Reducing complexity we obtain lower approximation and higher variance. The best case scenario here is to balance bias and variance.  
+
+\begin{eqnarray}
+	E[(y - \hat f(x))^2] = \text{Bias}(\hat f(x))^2 + \text{Var}(\hat f(x)) + \sigma^2 \\ = \left(E[f(x) - \hat f(x)]^2\right)+ \left(E[\hat f(x)^2] - E[\hat f(x)]^2\right) + \sigma^2
+\end{eqnarray}
+
 
 
 \section{Results and discussion} \label{Results}
