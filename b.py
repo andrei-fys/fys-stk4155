@@ -12,8 +12,8 @@ from sklearn.metrics import mean_squared_error, r2_score
 from Franke1 import FrankeFunction, SetUpDesignMat, SetUpGrid
 from sklearn.model_selection import cross_val_score, cross_val_predict, train_test_split
 
-def ScikitSolverOLS(N, degree, noise):
-    z, data, data_n, x_n, y_n, x, y = SetUpData(N,degree,noise)
+def ScikitSolverOLS(N, degree, noise, z, data, data_n):
+    #z, data, data_n, x_n, y_n, x, y = SetUpData(N,degree,noise)
     clf5 = LinearRegression(fit_intercept=False)
     clf5.fit(data,z)
     z_n = clf5.predict(data_n)
@@ -21,20 +21,20 @@ def ScikitSolverOLS(N, degree, noise):
     MSE = mean_squared_error(z, z_n)
     print('R2 SciKit', R2)
     print('MSE SciKit  ',MSE)
-    #print('Coefficient beta : \n', clf5.coef_)
-    #predict = cross_val_predict(clf5, data, z, cv=20)
-    
-    #print(cross_val_score(clf5, data, z, cv=5)) 
-    #print ('CV start here ')
-    #print ('R2 cross-valid ', r2_score(predict, z))
-    #scores = cross_val_score(clf5, data, z, cv=15)
-    #print ('Scores ', scores)
-    #print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
-    #print('MEAN ', scores.mean()) 
-    #print('STD ',scores.std()) 
+    print('Coefficient beta : \n', clf5.coef_)
 
-def ScikitSolverRidge(N,degree,noise):
-    z, data, data_n, _, _, _, _ = SetUpData(N,degree,noise)
+    print ('!!!!!!!CV start here !!!!!!!')
+    predict = cross_val_predict(clf5, data, z, cv=5)
+    scores = cross_val_score(clf5, data, z, cv=5)
+    print('scores : ', scores) 
+    print ('R2 cross-valid ', r2_score(predict, z))
+    print ('Scores ', scores)
+    print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+    print('MEAN ', scores.mean()) 
+    print('STD ',scores.std()) 
+
+def ScikitSolverRidge(N,degree,noise, z, data, data_n):
+    #z, data, data_n, _, _, _, _ = SetUpData(N,degree,noise)
     #ridge=RidgeCV(alphas=[0.1,1.0,10.0])
     ridge=Ridge(alpha=0.1, fit_intercept=False)
     ridge.fit(data,z)
@@ -42,8 +42,8 @@ def ScikitSolverRidge(N,degree,noise):
     print("Ridge Coefficient: ",ridge.coef_)
     print("Ridge Intercept: ", ridge.intercept_)
     
-def ScikitSolverLasso(N,degree,noise):
-    z, data, data_n, _, _, _, _ = SetUpData(N,degree,noise)
+def ScikitSolverLasso(N,degree,noise, z, data, data_n):
+    #z, data, data_n, _, _, _, _ = SetUpData(N,degree,noise)
     lasso=Lasso(alpha=0.2)
     lasso.fit(data,z)
     predl=lasso.predict(data)
@@ -52,8 +52,8 @@ def ScikitSolverLasso(N,degree,noise):
     print("Lasso Coefficient: ", lasso.coef_)
     print("Lasso Intercept: ", lasso.intercept_)
 
-def NaiveSolverOLS(N,degree,noise):
-    z, data, data_n, x_n, y_n, _, _ = SetUpData(N,degree,noise)
+def NaiveSolverOLS(N,degree,noise, z, data, data_n, x_n, y_n):
+    #z, data, data_n, x_n, y_n, _, _ = SetUpData(N,degree,noise)
     beta = np.linalg.inv(data.T.dot(data)).dot(data.T).dot(z)
     zpredict = data_n.dot(beta)
     #print('Coefficient beta naive: \n', beta.reshape(1,-1))
@@ -65,8 +65,8 @@ def NaiveSolverOLS(N,degree,noise):
     print(Mean(z), R2(z, zpredict), MSE(z, zpredict))
     return beta
 
-def NaiveSolverRidge(N,degree,noise):
-    z, data, data_n, x_n, y_n, _, _ = SetUpData(N,degree,noise)
+def NaiveSolverRidge(N,degree,noise, z, data, data_n, x_n, y_n):
+    #z, data, data_n, x_n, y_n, _, _ = SetUpData(N,degree,noise)
     I = np.identity(degree+1)	
     lambda_parameter = 0.1
     beta = np.linalg.inv(data.T.dot(data) + lambda_parameter*I).dot(data.T).dot(z)
@@ -124,7 +124,7 @@ def ConfidentIntervalBeta(Experiments, N, degree, noise):
     for i in range (0,degree+1):
         print ('Confindent interval for beta_{0} : [ {1} ; {2} ]' .format(i, Mean(betaBundle[i][:]) - 2*np.std(betaBundle[i][:]),  Mean(betaBundle[i][:]) + 2*np.std(betaBundle[i][:])))
 
-
+'''
 def kFoldCV(N,degree,noise):
 
     x,y = SetUpGrid(N,noise)
@@ -158,9 +158,9 @@ def kFoldCV(N,degree,noise):
     print('Bias^2 = ', bias)
     print('Variance  = ', var)
     print('|MSE - bias - variance| = ', abs(MSE_mean - bias - var))
-
-def ScikitSolverRidgeCV(N, degree, noise):
-    z, data, _, _, _, _, _ = SetUpData(N,degree,noise)
+'''
+def ScikitSolverRidgeCV(N, degree, noise, z, data):
+    #z, data, _, _, _, _, _ = SetUpData(N,degree,noise)
     X_train, X_test, y_train, y_test = train_test_split(data, z, test_size=0.2, random_state=0)
     ridge=Ridge(alpha=0.1, fit_intercept=False)
     ridge.fit(X_train,y_train)
@@ -169,8 +169,8 @@ def ScikitSolverRidgeCV(N, degree, noise):
     #print ('R2: ', R_2)
     print('R2: ',ridge.score(X_test, y_test))
 
-def ScikitSolverLassoCV(N, degree, noise):
-    z, data, _, _, _, _, _ = SetUpData(N,degree,noise)
+def ScikitSolverLassoCV(N, degree, noise, z, data):
+    #z, data, _, _, _, _, _ = SetUpData(N,degree,noise)
     X_train, X_test, y_train, y_test = train_test_split(data, z, test_size=0.2, random_state=0)
     lasso=Lasso(alpha=0.1, fit_intercept=False)
     lasso.fit(X_train,y_train)
@@ -179,8 +179,8 @@ def ScikitSolverLassoCV(N, degree, noise):
     #print ('R2: ', R_2)
     print('R2: ', lasso.score(X_test, y_test))
 
-def ScikitSolverOSLCV(N, degree, noise):
-    z, data, _, _, _, _, _ = SetUpData(N,degree,noise)
+def ScikitSolverOSLCV(N, degree, noise, z, data):
+    #z, data, _, _, _, _, _ = SetUpData(N,degree,noise)
     X_train, X_test, y_train, y_test = train_test_split(data, z, test_size=0.2, random_state=0)
     OSL=LinearRegression( fit_intercept=False)
     OSL.fit(X_train,y_train)
@@ -210,6 +210,8 @@ resampling = True
 x_exact = np.arange(0, 1, 0.05)
 y_exact = np.arange(0, 1, 0.05)
 
+z, data, data_n, x_n, y_n, x, y = SetUpData(N,degree,noise)
+
 #print("########################################")
 #kFoldCV(N,degree,noise)
 #ScikitSolverRidge(N,degree,noise)
@@ -218,19 +220,21 @@ y_exact = np.arange(0, 1, 0.05)
 #print("########################################")
 #ScikitSolverRidgeCV(N, degree, noise)
 print("############ OSL SciKit #########################")
-ScikitSolverOLS(N, degree, noise)
+ScikitSolverOLS(N, degree, noise, z, data, data_n)
 print ("################## CV OSL ######################")
-ScikitSolverOSLCV(N, degree, noise)
+ScikitSolverOSLCV(N, degree, noise, z, data)
 
 print ('=============== Ridge SciKit ===================')
-ScikitSolverRidge(N, degree, noise)
+ScikitSolverRidge(N, degree, noise, z, data, data_n)
 print ('=============== Ridge CV =======================')
-ScikitSolverRidgeCV(N, degree, noise)
+ScikitSolverRidgeCV(N, degree, noise, z, data)
 
 print ('*************** Lasso Scikit *******************')
-ScikitSolverLasso(N, degree, noise)
+ScikitSolverLasso(N, degree, noise, z, data, data_n)
 print ('*************** Lasso CV *******************')
-ScikitSolverLassoCV(N, degree, noise)
+ScikitSolverLassoCV(N, degree, noise, z, data)
+
+
 
 
 
