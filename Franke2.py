@@ -4,7 +4,7 @@ from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import numpy as np
 from random import random, seed
-from sklearn.linear_model import LinearRegression, RidgeCV, Lasso, Ridge 
+from sklearn.linear_model import LinearRegression, RidgeCV, Lasso, Ridge, LassoCV 
 from sklearn.metrics import mean_squared_error, r2_score 
 import sklearn.preprocessing
 import copy as cp
@@ -38,7 +38,7 @@ def SetUpDesignMatrix(degree, x,y):
 
 ''' SCI-KIT implementation'''
 
-def OLS_SK(degree, X):
+def OLS_SK(degree, X, x, y):
     olsreg = LinearRegression(fit_intercept=False)
     z = FrankeFunction(x,y)
     olsreg.fit(X, z.ravel())
@@ -52,8 +52,34 @@ def OLS_SK(degree, X):
     print ('Variance in beta for OSL ',linreg_coef_var)
     print ('R2, Bias, MSE error for OSL ',r2,bias,mse_error)
 
+    '''Make plot'''
 
-def Rigde_SK(degree, X, alpha):
+    fig = plt.figure()
+    ax = fig.gca(projection='3d')
+    print ('Shape z_n ', np.shape(zpredict))
+    #print ('Shape z_n ', np.shape(x))
+    zpredict = zpredict.reshape(1000,1000)
+    #print ('Shape z_n ', np.shape(z_n))
+    #print (np.shape(x), np.shape(y))
+    surf = ax.plot_surface(x, y, zpredict, cmap=cm.coolwarm,
+    linewidth=0, antialiased=False)
+    ax.set_zlim(-0.10, 1.40)
+    ax.zaxis.set_major_locator(LinearLocator(10))
+    ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
+
+    ax.text2D(0.05, 0.95, "The Franke function fitted", transform=ax.transAxes, color= 'blue')
+    xLabel = ax.set_xlabel('\nx', linespacing=3.2)
+    yLabel = ax.set_ylabel('\ny', linespacing=3.1)
+    zLabel = ax.set_zlabel('\n f(x,y)', linespacing=0.5)
+    fig.colorbar(surf, shrink=0.5, aspect=5)
+    plt.draw()
+    #plt.savefig("Franke_fitted_OLS.pdf")
+    #plt.savefig("Franke_fitted_Ridge.pdf")
+    #plt.savefig("Franke_fitted_Lasso.pdf")
+
+
+
+def Rigde_SK(degree, X, alpha, x, y):
     ridge = Ridge(alpha=alpha, solver="lsqr", fit_intercept=False)
     z = FrankeFunction(x,y)
     noise_val = np.random.normal(0,1,np.size(z))
@@ -72,25 +98,76 @@ def Rigde_SK(degree, X, alpha):
     print ('R2, Bias, MSE error for Ridge ',r2, bias,mse_error)
     print ('Alternative r2 ',R2)
 
+    '''Make plot'''
+
+    fig = plt.figure()
+    ax = fig.gca(projection='3d')
+    #print ('Shape z_n ', np.shape(zpredict))
+    #print ('Shape z_n ', np.shape(x))
+    zpredict = zpredict.reshape(1000,1000)
+    #print ('Shape z_n ', np.shape(z_n))
+    #print (np.shape(x), np.shape(y))
+    surf = ax.plot_surface(x, y, zpredict, cmap=cm.coolwarm,
+    linewidth=0, antialiased=False)
+    ax.set_zlim(-0.10, 1.40)
+    ax.zaxis.set_major_locator(LinearLocator(10))
+    ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
+
+    ax.text2D(0.05, 0.95, "The Franke function fitted", transform=ax.transAxes, color= 'blue')
+    xLabel = ax.set_xlabel('\nx', linespacing=3.2)
+    yLabel = ax.set_ylabel('\ny', linespacing=3.1)
+    zLabel = ax.set_zlabel('\n f(x,y)', linespacing=0.5)
+    fig.colorbar(surf, shrink=0.5, aspect=5)
+    plt.draw()
+    #plt.savefig("Franke_fitted_OLS.pdf")
+    #plt.savefig("Franke_fitted_Ridge.pdf")
+    #plt.savefig("Franke_fitted_Lasso.pdf")
+
 
     
-def Lasso_SK(degree, X, alpha):
-    lasso = Lasso(alpha=alpha, fit_intercept=False)
+def Lasso_SK(degree, X, alpha,x,y): 
+    alphas = np.arange(0.2, 0.6, 0.001) 
+    lasso = LassoCV(alphas=alphas, fit_intercept=False )
     z = FrankeFunction(x,y)
     lasso.fit(X, z.ravel())
     zpredict = lasso.predict(X)
-    r2 = - r2_score(z.ravel(), zpredict)
-    R2 = - lasso.score(X, z.ravel())
+    r2 = r2_score(z.ravel(), zpredict)
+    R2 = lasso.score(X, z.ravel())
     bias = bias2(z.ravel(), zpredict)
     mse_error = mse(z.ravel(), zpredict)
-    print (r2,bias,mse_error)
+    #print (r2,bias,mse_error)
     N, P = X.shape
     z_variance = np.sum((z.ravel() - zpredict)**2) / (N - P - 1)
     beta_variance = ridge_regression_variance(
             X, z_variance, alpha)
-    print ('Variance in beta for Lasso ',beta_variance)
-    print ('R2, Bias, MSE error for Lasso ',r2, bias,mse_error)
+    #print ('Variance in beta for Lasso ',beta_variance)
+    #print ('R2, Bias, MSE error for Lasso ',r2, bias,mse_error)
     print ('Alternative r2 ',R2)
+
+    '''Make plot'''
+
+    fig = plt.figure()
+    ax = fig.gca(projection='3d')
+    #print ('Shape z_n ', np.shape(zpredict))
+    #print ('Shape z_n ', np.shape(x))
+    zpredict = zpredict.reshape(1000,1000)
+    #print ('Shape z_n ', np.shape(z_n))
+    #print (np.shape(x), np.shape(y))
+    surf = ax.plot_surface(x, y, zpredict, cmap=cm.coolwarm,
+    linewidth=0, antialiased=False)
+    ax.set_zlim(-0.10, 1.40)
+    ax.zaxis.set_major_locator(LinearLocator(10))
+    ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
+
+    ax.text2D(0.05, 0.95, "The Franke function fitted", transform=ax.transAxes, color= 'blue')
+    xLabel = ax.set_xlabel('\nx', linespacing=3.2)
+    yLabel = ax.set_ylabel('\ny', linespacing=3.1)
+    zLabel = ax.set_zlabel('\n f(x,y)', linespacing=0.5)
+    fig.colorbar(surf, shrink=0.5, aspect=5)
+    plt.draw()
+    #plt.savefig("Franke_fitted_OLS.pdf")
+    #plt.savefig("Franke_fitted_Ridge.pdf")
+    plt.savefig("Franke_fitted_Lasso.pdf")
 
 
 def OLS_CV_SKI(degree, x, y):
@@ -108,8 +185,7 @@ def OLS_CV_SKI(degree, x, y):
     y_predicted = []
     beta_ = []
 
-    for train_index, test_index in tqdm(kf.split(X_train), 
-        desc="SciKit-Learn k-fold Cross Validation"):
+    for train_index, test_index in tqdm(kf.split(X_train), desc=None):
 
         kX_train, kX_test = X_train[train_index], X_train[test_index]
         kY_train, kY_test = y_train[train_index], y_train[test_index]
@@ -139,6 +215,7 @@ def OLS_CV_SKI(degree, x, y):
     print ('MSE',MSE)
     print ('R_2', R_2)
     print ('Beta coef variance ', beta_variance)
+    print ('Bias2', bias)
 
 
 def Ridge_CV_SKI(degree, x, y, alpha):
@@ -156,8 +233,8 @@ def Ridge_CV_SKI(degree, x, y, alpha):
     y_predicted = []
     beta_ = []
 
-    for train_index, test_index in tqdm(kf.split(X_train), 
-        desc="SciKit-Learn k-fold Cross Validation"):
+    for train_index, test_index in tqdm(kf.split(X_train), desc=None):
+
 
         kX_train, kX_test = X_train[train_index], X_train[test_index]
         kY_train, kY_test = y_train[train_index], y_train[test_index]
@@ -187,6 +264,7 @@ def Ridge_CV_SKI(degree, x, y, alpha):
     print ('MSE',MSE)
     print ('R_2', R_2)
     print ('Beta coef variance ', beta_variance)
+    print ('Bias2', bias)
 
 
 
@@ -205,8 +283,7 @@ def Lasso_CV_SKI(degree, x, y, alpha):
     y_predicted = []
     beta_ = []
 
-    for train_index, test_index in tqdm(kf.split(X_train), 
-        desc="SciKit-Learn k-fold Cross Validation"):
+    for train_index, test_index in tqdm(kf.split(X_train), desc=None):
 
         kX_train, kX_test = X_train[train_index], X_train[test_index]
         kY_train, kY_test = y_train[train_index], y_train[test_index]
@@ -236,9 +313,11 @@ def Lasso_CV_SKI(degree, x, y, alpha):
     print ('MSE',MSE)
     print ('R_2', R_2)
     print ('Beta coef variance ', beta_variance)
+    print ('Bias2', bias)
+
+
 
 ''' Manual implementation'''
-
 
 
 
@@ -249,14 +328,15 @@ if __name__ == '__main__':
     #noise = sys.argv[2]
     #degree = 5
     x,y = SetUpGrid(N);
+    z = FrankeFunction(x,y)
     X = SetUpDesignMatrix(degree, x,y)
     #print (np.size(X))
-    #OLS_SK(degree, X)
+    #OLS_SK(degree, X, x, y)
     alpha = float(sys.argv[2])
     #alpha = 0.2
-    #Rigde_SK(degree, X, alpha)
-    #Lasso_SK(degree, X, alpha)
-    OLS_CV_SKI(degree, x, y)
-    Ridge_CV_SKI(degree, x, y, alpha)
-    Lasso_CV_SKI(degree, x, y, alpha)
+    #Rigde_SK(degree, X, alpha, x, y)
+    Lasso_SK(degree, X, alpha, x, y)
+    #OLS_CV_SKI(degree, x, y)
+    #Ridge_CV_SKI(degree, x, y, alpha)
+    #Lasso_CV_SKI(degree, x, y, alpha)
     
