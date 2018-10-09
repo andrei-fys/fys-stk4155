@@ -8,9 +8,10 @@ from sklearn.linear_model import LinearRegression, RidgeCV, Lasso, Ridge
 from sklearn.metrics import mean_squared_error, r2_score 
 import sklearn.preprocessing
 import copy as cp
-from functions import bias2, mse, ridge_regression_variance
+from functions import bias2, mse, ridge_regression_variance, R2
 import sklearn.model_selection 
 import sys
+from tqdm import tqdm
 #np.set_printoptions(threshold=np.nan)
 
 
@@ -34,6 +35,8 @@ def SetUpDesignMatrix(degree, x,y):
     polynom = sklearn.preprocessing.PolynomialFeatures(degree=degree, include_bias=True)
     X = polynom.fit_transform(cp.deepcopy(np.c_[x.reshape(-1, 1), y.reshape(-1, 1)]))
     return X
+
+''' SCI-KIT implementation'''
 
 def OLS_SK(degree, X):
     olsreg = LinearRegression(fit_intercept=False)
@@ -90,6 +93,151 @@ def Lasso_SK(degree, X, alpha):
     print ('Alternative r2 ',R2)
 
 
+def OLS_CV_SKI(degree, x, y):
+    """Scikit Learn method for cross validation."""
+    z = FrankeFunction(x,y)
+    x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(
+        np.c_[x.ravel(), y.ravel()], z.ravel(),
+        test_size=0.2, shuffle=True)
+
+    kf = sklearn.model_selection.KFold(n_splits=5)
+
+    X_test = np.c_[np.ones(x_test.shape), x_test, x_test*x_test]
+    X_train = np.c_[np.ones(x_train.shape), x_train, x_train*x_train]
+
+    y_predicted = []
+    beta_ = []
+
+    for train_index, test_index in tqdm(kf.split(X_train), 
+        desc="SciKit-Learn k-fold Cross Validation"):
+
+        kX_train, kX_test = X_train[train_index], X_train[test_index]
+        kY_train, kY_test = y_train[train_index], y_train[test_index]
+        kf_reg = LinearRegression(fit_intercept=False)
+        kf_reg.fit(kX_train, kY_train)
+        y_predicted.append(kf_reg.predict(X_test))
+        beta_.append(kf_reg.coef_)
+    y_predicted = np.asarray(y_predicted)
+
+    # Mean Square Error
+    _mse = (y_test - y_predicted)**2
+    MSE = np.mean(np.mean(_mse, axis=0, keepdims=True))
+
+    # Bias
+    _mean_pred = np.mean(y_predicted, axis=0, keepdims=True)
+    bias = np.mean((y_test - _mean_pred)**2)
+
+    # R^2 
+    R_2 = np.mean(R2(y_test, y_predicted, axis=0))
+
+    # Variance
+    var = np.mean(np.var(y_predicted, axis=0, keepdims=True))
+
+    beta_variance = np.asarray(beta_).var(axis=0)
+    beta_ = np.asarray(beta_).mean(axis=0)
+    print ('Sci-Kit k fold for OLS results: ')
+    print ('MSE',MSE)
+    print ('R_2', R_2)
+    print ('Beta coef variance ', beta_variance)
+
+
+def Ridge_CV_SKI(degree, x, y, alpha):
+    """Scikit Learn method for cross validation."""
+    z = FrankeFunction(x,y)
+    x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(
+        np.c_[x.ravel(), y.ravel()], z.ravel(),
+        test_size=0.2, shuffle=True)
+
+    kf = sklearn.model_selection.KFold(n_splits=5)
+
+    X_test = np.c_[np.ones(x_test.shape), x_test, x_test*x_test]
+    X_train = np.c_[np.ones(x_train.shape), x_train, x_train*x_train]
+
+    y_predicted = []
+    beta_ = []
+
+    for train_index, test_index in tqdm(kf.split(X_train), 
+        desc="SciKit-Learn k-fold Cross Validation"):
+
+        kX_train, kX_test = X_train[train_index], X_train[test_index]
+        kY_train, kY_test = y_train[train_index], y_train[test_index]
+        kf_reg = Ridge(alpha=alpha, solver="lsqr", fit_intercept=False) 
+        kf_reg.fit(kX_train, kY_train)
+        y_predicted.append(kf_reg.predict(X_test))
+        beta_.append(kf_reg.coef_)
+    y_predicted = np.asarray(y_predicted)
+
+    # Mean Square Error
+    _mse = (y_test - y_predicted)**2
+    MSE = np.mean(np.mean(_mse, axis=0, keepdims=True))
+
+    # Bias
+    _mean_pred = np.mean(y_predicted, axis=0, keepdims=True)
+    bias = np.mean((y_test - _mean_pred)**2)
+
+    # R^2 
+    R_2 = np.mean(R2(y_test, y_predicted, axis=0))
+
+    # Variance
+    var = np.mean(np.var(y_predicted, axis=0, keepdims=True))
+
+    beta_variance = np.asarray(beta_).var(axis=0)
+    beta_ = np.asarray(beta_).mean(axis=0)
+    print ('Sci-Kit k fold for Ridge results: ')
+    print ('MSE',MSE)
+    print ('R_2', R_2)
+    print ('Beta coef variance ', beta_variance)
+
+
+
+def Lasso_CV_SKI(degree, x, y, alpha):
+    """Scikit Learn method for cross validation."""
+    z = FrankeFunction(x,y)
+    x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(
+        np.c_[x.ravel(), y.ravel()], z.ravel(),
+        test_size=0.2, shuffle=True)
+
+    kf = sklearn.model_selection.KFold(n_splits=5)
+
+    X_test = np.c_[np.ones(x_test.shape), x_test, x_test*x_test]
+    X_train = np.c_[np.ones(x_train.shape), x_train, x_train*x_train]
+
+    y_predicted = []
+    beta_ = []
+
+    for train_index, test_index in tqdm(kf.split(X_train), 
+        desc="SciKit-Learn k-fold Cross Validation"):
+
+        kX_train, kX_test = X_train[train_index], X_train[test_index]
+        kY_train, kY_test = y_train[train_index], y_train[test_index]
+        kf_reg = Lasso(alpha=alpha, fit_intercept=False)
+        kf_reg.fit(kX_train, kY_train)
+        y_predicted.append(kf_reg.predict(X_test))
+        beta_.append(kf_reg.coef_)
+    y_predicted = np.asarray(y_predicted)
+
+    # Mean Square Error
+    _mse = (y_test - y_predicted)**2
+    MSE = np.mean(np.mean(_mse, axis=0, keepdims=True))
+
+    # Bias
+    _mean_pred = np.mean(y_predicted, axis=0, keepdims=True)
+    bias = np.mean((y_test - _mean_pred)**2)
+
+    # R^2 
+    R_2 = np.mean(R2(y_test, y_predicted, axis=0))
+
+    # Variance
+    var = np.mean(np.var(y_predicted, axis=0, keepdims=True))
+
+    beta_variance = np.asarray(beta_).var(axis=0)
+    beta_ = np.asarray(beta_).mean(axis=0)
+    print ('Sci-Kit k fold for Ridge results: ')
+    print ('MSE',MSE)
+    print ('R_2', R_2)
+    print ('Beta coef variance ', beta_variance)
+
+''' Manual implementation'''
 
 
 
@@ -103,9 +251,12 @@ if __name__ == '__main__':
     x,y = SetUpGrid(N);
     X = SetUpDesignMatrix(degree, x,y)
     #print (np.size(X))
-    OLS_SK(degree, X)
+    #OLS_SK(degree, X)
     alpha = float(sys.argv[2])
     #alpha = 0.2
-    Rigde_SK(degree, X, alpha)
-    Lasso_SK(degree, X, alpha)
+    #Rigde_SK(degree, X, alpha)
+    #Lasso_SK(degree, X, alpha)
+    OLS_CV_SKI(degree, x, y)
+    Ridge_CV_SKI(degree, x, y, alpha)
+    Lasso_CV_SKI(degree, x, y, alpha)
     
