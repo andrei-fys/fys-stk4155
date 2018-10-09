@@ -44,10 +44,48 @@ Variables $\hat{x} = [x_0,x_1, x_2,\dots, x_{n-1}]^T,$ are called independent  o
 	Variables  $\hat{y} = [y_0,y_1, y_2,\dots, y_{n-1}]^T,$ are called dependent or response variable. Here $n$ is number of samples measured.
 \end{defn}
 The aim of the regression is to estimate the relationship between $\hat{x}$ and $\hat{y}$ variables in order to make predictions and find functional dependences. \\
-Let's assume we measure a set of parameters for each sample. Number of parameters is denoted by $p$. In this case instead for vector we would get a matrix $\textbf{X}$ and $\textbf{Y}$. Matrix $\textbf{X}$ is called \textbf{design matrix} and matrix $\textbf{Y}$ is \textbf{response matrix}. Goal of regression analysis is to determine the functional dependence between $\textbf{X}$ and $\textbf{Y}$ or one may say explain one in terms of the other. Here we have no knowledge on the function is available in advance. However one may assume the function to be linear with respect to some unknown parameters $\beta = (\beta_1, \ldots, \beta_p)^{\top}$.Such assumption leads to so called \textbf{linear regression} and set of $\beta$  are \textbf{regression parameters}. There are many types of linear regressions and in the sections below we are going to describe some of them.
-\subsection{Ordinary Least Squared}
+Let's assume we measure a set of parameters for each sample. Number of parameters is denoted by $p$. In this case instead for vector we would get a matrix $\textbf{X}$ and $\textbf{Y}$. Matrix $\textbf{X}$ is called \textbf{design matrix} and matrix $\textbf{Y}$ is \textbf{response matrix}. Goal of regression analysis is to determine the functional dependence between $\textbf{X}$ and $\textbf{Y}$ or one may say explain one in terms of the other. Here we have no knowledge on the function is available in advance. However one may assume the function to be linear with respect to some unknown parameters $\beta = (\beta_1, \ldots, \beta_p)^{\top}$.Such assumption leads to so called \textbf{linear regression} and set of $\beta$  are \textbf{regression parameters}. There are many types of linear regressions and in the sections below we are going to describe some of them.\\
+Our goal if to find the functional dependence between variables in form $y=f(x)$, which is not actually possible in the closed form. Instead we are going to fin an approximation for $y$ in a form:
+\begin{equation}
+y=y(x) \rightarrow y(x_i)=\tilde{y}_i+\epsilon_i=\sum_{j=0}^{n-1} \beta_i x_i^j+\epsilon_i.
+\end{equation}
+In matrix form it can be written as:
+\begin{equation}
+\hat{y} = \hat{X}\hat{\beta}+\hat{\epsilon},
+\end{equation}
+here $\hat{\epsilon}$ is error vector.
+In order to obtain $\hat{\beta}$ values we have to minimize the error.
+In order to do so we set up the function that provide us the difference between the exact $y$ and approximated values $\tilde{y}$. This function is denoted as $Q(\hat{\beta})$ and has a specific form for each of the regression methods disscused below.
+\subsection{Ordinary Least Squared and Ridge regression}
+We present both methods here because OLS can be presented as Ridge regression for specific value of regerssion parameter.
+\begin{align}
+Q(\hat{\beta})=\left\|\left(\hat{y}-\hat{X}\hat{\beta}\right)\right\|_2^2 + \lambda   \left\|\hat{\beta} \right\|_2^2.
+\end{align}
+If $\lambda = 0$ we obtain the OLS regression. Namely:
+\begin{align}
+Q(\hat{\beta})=\left\|\left(\hat{y}-\hat{X}\hat{\beta}\right)\right\|_2^2 = \left(\hat{y}-\hat{X}\hat{\beta}\right)^T\left(\hat{y}-\hat{X}\hat{\beta}\right).
+\end{align}
+Minimizing the $Q(\hat{\beta})$ with respect to $\hat{\beta}$ we obtain:
+\begin{equation}
+\frac{\partial Q(\hat{\beta})}{\partial \hat{\beta}} = 0 = \hat{X}^T\left( \hat{y}-\hat{X}\hat{\beta}\right).
+\end{equation}
+And then, if our design matrix $\hat{X}$ in invertible we get
+\begin{equation}
+\hat{\beta}_{\text{OLS}} =\left(\hat{X}^T\hat{X}\right)^{-1}\hat{X}^T\hat{y}.
+\end{equation}
+If $\lambda \neq 0$ we obtain the Ridge regression. Namely:
+\begin{equation}
+\frac{\partial Q(\hat{\beta})}{\partial \hat{\beta}} = 0 = \hat{X}^T\left( \hat{y}-\hat{X}\hat{\beta}\right) - \lambda \hat{\beta}.
+\end{equation}
+And then we obtain:
+\begin{equation}
+\left(\hat{X}^T\hat{X}+ \lambda I \right)^{-1} \hat{\beta} = \hat{X}^T\hat{y}.
+\end{equation}
+Then we finally get equation for $\hat{\beta}_{\text{Ridge}}$
+\begin{equation}
+\hat{\beta}_{\text{Ridge}} =\left(\hat{X}^T\hat{X}+ \lambda I \right)^{-1}\hat{X}^T\hat{y}.
+\end{equation}
 
-\subsection{Ridge}
 
 \subsection{Lasso}
 
@@ -63,8 +101,35 @@ The higher complexity of the model means that we have better approximation and t
 \begin{eqnarray}
 	E[(y - \hat f(x))^2] = \text{Bias}(\hat f(x))^2 + \text{Var}(\hat f(x)) + \sigma^2 \\ = \left(E[f(x) - \hat f(x)]^2\right)+ \left(E[\hat f(x)^2] - E[\hat f(x)]^2\right) + \sigma^2
 \end{eqnarray}
+\subsection{The Franke function}
+\begin{align*}
+f(x,y) &= \frac{3}{4}\exp{\left(-\frac{(9x-2)^2}{4} - \frac{(9y-2)^2}{4}\right)}+\frac{3}{4}\exp{\left(-\frac{(9x+1)^2}{49}- \frac{(9y+1)}{10}\right)} \\
+&+\frac{1}{2}\exp{\left(-\frac{(9x-7)^2}{4} - \frac{(9y-3)^2}{4}\right)} -\frac{1}{5}\exp{\left(-(9x-4)^2 - (9y-7)^2\right) }.
+\end{align*}
 
+\begin{figure}
+	\centerline{\includegraphics[scale=0.9]{Franke_axact.pdf}}
+		\label{plt:Franke_exact}
+		\caption{The exact Franke function used in the project to test the fitting.}
+\end{figure}
 
+\begin{figure}
+	\centerline{\includegraphics[scale=0.9]{Franke_fitted_OLS.pdf}}
+	\label{plt:Franke_fitted_OLS}
+	\caption{The  Franke function fitted by OLS, no resampling}
+\end{figure}
+
+\begin{figure}
+	\centerline{\includegraphics[scale=0.9]{Franke_fitted_Ridge.pdf}}
+	\label{plt:Franke_fitted_Ridge}
+	\caption{The  Franke function fitted by Ridge, no resampling}
+\end{figure}
+
+\begin{figure}
+	\centerline{\includegraphics[scale=0.9]{Franke_fitted_Lasso.pdf}}
+	\label{plt:Franke_fitted_Lasso}
+	\caption{The  Franke function fitted by Lasso, no resampling}
+\end{figure}
 
 \section{Results and discussion} \label{Results}
 
