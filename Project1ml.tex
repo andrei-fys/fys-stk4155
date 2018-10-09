@@ -21,8 +21,7 @@ FYS-STK 4155
 
 \maketitle
 \begin{abstract}
-In this project we have performed the Ordinary Least Squares (OSL), Ridge and Lasso regression. The solvers for OSL and Ridge have been developed from scratch and the Lasso regression have been implemented using a Sci-Kit learn library. The estimators were used on the test Franke function (REF) and on the real data - terrain data for Norway.The k-fold cross validation for all the methods have been also implemented and the bias-variance was studied for all the models.\\
-ADD SOME RESULTS HERE!!!!!
+In this project we have performed the Ordinary Least Squares (OSL), Ridge and Lasso regression. The solvers for OSL and Ridge have been developed from scratch and the Lasso regression have been implemented using a Sci-Kit learn library. The estimators were used on the test Franke function (REF) and on the real data - terrain data for Norway.The k-fold cross validation for all the methods have been also implemented and the bias-variance was studied for all the models.\\!
 \end{abstract}
 \clearpage 
 
@@ -30,9 +29,11 @@ ADD SOME RESULTS HERE!!!!!
 \section*{Introduction}
 Regression analysis is a widely used tool in data science. It incorporates many different techniques and models for estimating relations between variables. In this project we aim to study most widely used estimators - OSL, Ridge and Lasso.
 OSL regression is one of the most popular models here. It has been implemented in many software packages is various programming languages and is used by many data scientist everyday for performing analysis. In this project we aim to implement it from scratch in order to have a better understanding of its machinery. Rigde regression is also implemented from scratch here. \\
-A regression analysis aims to find the relations between various variables not only to explain or extract a functional dependency, but also to be able to predict outcomes for some unknown values of this variables. Here we need to be very careful with our model, because even if we were able to implement it with the smallest possible error and even hit all the variables provided for estimation of the relations, we can't be sure it will provide same good results when applied to the new set of data. The problem here is a possibility of over-fitting.In order to prevent this we use so-called re-sampling and cross-validation. In this project a k-fold cross validation have beed applied for all three methods. ADD SOME RESULTS HERE!!!\\
+A regression analysis aims to find the relations between various variables not only to explain or extract a functional dependency, but also to be able to predict outcomes for some unknown values of this variables. Here we need to be very careful with our model, because even if we were able to implement it with the smallest possible error and even hit all the variables provided for estimation of the relations, we can't be sure it will provide same good results when applied to the new set of data. The problem here is a possibility of over-fitting.In order to prevent this we use so-called re-sampling and cross-validation. In this project a k-fold cross validation have beed applied for all three methods. \\
 Structure of the report:\\
 In section $\ref{Theory}$ we provide a brief theoretical review of the implemented models and re-sampling techniques.\\
+In section $\ref{Results}$ we provide results for the test Franke function and for the real terrain data.
+In section conclusion $\ref{Conclusion}$ conclusion and some possibilities for further research are discussed.
 
 \section{General description of the linear regression methods} \label{Theory}
 Regression analysis is a powerful tool to analyze the data. Let's start with some definitions needed to understand how it works.
@@ -85,9 +86,12 @@ Then we finally get equation for $\hat{\beta}_{\text{Ridge}}$
 \begin{equation}
 \hat{\beta}_{\text{Ridge}} =\left(\hat{X}^T\hat{X}+ \lambda I \right)^{-1}\hat{X}^T\hat{y}.
 \end{equation}
-
-
 \subsection{Lasso}
+For Lasso regression $Q(\hat{\beta})$ function is written as:
+\begin{align}
+Q(\hat{\beta})=\left\|\left(\hat{y}-\hat{X}\hat{\beta}\right)\right\|_2^2 + \lambda   \left\|\hat{\beta} \right\|_1.
+\end{align}
+It is very similar to the one we have for Ridge regression, only we now take $L_1$-norm for $\hat{\beta}_{\text{Ridge}}$, not $L_2$-norm.
 
 \subsection{Resampling methods}\label{resampling}
 As we have already mention the main goal of regression analysis is to find the relations between the dependent and independent variables by estimating set of parameters. Once we have sampled the date and run the regression analysis we have obtained this parameters. However we only can do it once for a single data sample and can't predict how the model we have made will explain new data. The process of collecting data might also be expensive both in computational time and in real life currency, so one might need a recipe to avoid collecting more data and re-use the existing. Another problem here is overfitting. If our model provides us an estimate that corresponds too close to the provided set of data (usually called training data) it might fail to predict the fit for any additional data (usually refereed to as testing data). Generally speaking resampling is a method that aims to improve the prediction accuracy of the model. This is achieved by implementing a very simple idea - splitting the data set into training and testing data. There many such methods for example k-fold cross-validation and bootstrapping. \\
@@ -95,16 +99,16 @@ K-fold cross-validation require dividing the data set into a set of k-subsets (f
  
 \subsection{Bias-variance tradeoff}
 
-As it was mentioned in $\ref{resampling}$ overfitting is a problem we want to avoid. This many be done by reducing the complexity of the model. However, it may lead to another problem - underfitting, which is means that we are ignoring some important features of the train data. The problem of balancing these two is called bias-variance tradeoff or bias-variance dilemma. This is a well known problem in data analysis. Here high bias correspond to underfitting and high variance to overfitting. High bias usually means that the model is not complex enough and correspondingly high variance means that model is too complex. \\
+As it was mentioned in $\ref{resampling}$ overfitting is a problem we want to avoid. This many be done by reducing the complexity of the model. However, it may lead to another problem - underfitting, which is means that we are ignoring some important features of the train data. The problem of balancing these two is called bias-variance tradeoff or bias-variance dilemma \cite{biasvar}. This is a well known problem in data analysis. Here high bias correspond to underfitting and high variance to overfitting. High bias usually means that the model is not complex enough and correspondingly high variance means that model is too complex. \\
 The higher complexity of the model means that we have better approximation and that lead to lower bias. However any real model has noise and higher approximation is not always good, as we want to avoid the influence of noise. Reducing complexity we obtain lower approximation and higher variance. The best case scenario here is to balance bias and variance.  
 
 \begin{eqnarray}
-	E[(y - \hat f(x))^2] = \text{Bias}(\hat f(x))^2 + \text{Var}(\hat f(x)) + \sigma^2 \\ = \left(E[f(x) - \hat f(x)]^2\right)+ \left(E[\hat f(x)^2] - E[\hat f(x)]^2\right) + \sigma^2
+	E[(y - \hat f(x))^2] = \\ \left(E[f(x) - \hat f(x)]^2\right)+ \left(E[\hat f(x)^2] - E[\hat f(x)]^2\right) + \sigma^2 =\\ \text{Bias}(\hat f(x))^2 + \text{Var}(\hat f(x)) + \sigma^2
 \end{eqnarray}
 \subsection{The Franke function}
 \begin{align*}
 f(x,y) &= \frac{3}{4}\exp{\left(-\frac{(9x-2)^2}{4} - \frac{(9y-2)^2}{4}\right)}+\frac{3}{4}\exp{\left(-\frac{(9x+1)^2}{49}- \frac{(9y+1)}{10}\right)} \\
-&+\frac{1}{2}\exp{\left(-\frac{(9x-7)^2}{4} - \frac{(9y-3)^2}{4}\right)} -\frac{1}{5}\exp{\left(-(9x-4)^2 - (9y-7)^2\right) }.
+&+\frac{1}{2}\exp{\left(-\frac{(9x-7)^2}{4} - \frac{(9y-3)^2}{4}\right)} -\frac{1}{5}\exp{\left(-(9x-4)^2 - (9y-7)^2\right)}.
 \end{align*}
 
 \begin{figure}
@@ -133,6 +137,45 @@ f(x,y) &= \frac{3}{4}\exp{\left(-\frac{(9x-2)^2}{4} - \frac{(9y-2)^2}{4}\right)}
 
 \section{Results and discussion} \label{Results}
 
+\begin{table}
+	\begin{tabular}{ |c|c|c|c|c|c|c|c|} 
+		\hline
+		Method & MSE  & $R^2$ & $Bias^2$ & Variance    \\
+		\hline 
+		\hline  
+		OLS & 0.00197089  & 0.9766113 & 0.08229618 & 0.00197094  \\
+		\hline  
+		OLS resampled & 0.02266839  & 0.99999329 & 0.022668371 & 4.10271144$\times 10^{-8}$  \\
+		\hline
+		Ridge & 0.07820809  &0.94582540& 0.07820809 &  0.00448738   \\ 
+				\hline
+		Ridge resampled & 0.02294272  & 0.99999307 & 0.02294268 & 3.63551460 $\times 10^{-8}$    \\ 
+		\hline
+		Lasso & 0.03390619  & 0.57353504 & 0.02018597 & 0.03390694    \\ 
+		\hline
+		Lasso resampled & 0.03392132  & 0.99997866 & 0.033921304 & 2.0627578$\times 10^{-8}$    \\ 
+		\hline
+	\end{tabular}
+	\caption{MSE, $R^2$, $Bias^2$ and variance for OLS, Ridge and Lasso regression. Regression parameter $\lambda=0.2$ for Ridge and  $\lambda=0.015$  for Lasso. Five-fold cross-validation was used.}
+\end{table}
+
+
+
+
+
+
+
+
+
 \section{Conclusion}\label{Conclusion}
+
+
+\begin{thebibliography}{9}
+	\bibitem{biasvar} 
+	Pankaj Mehta et al. 
+	\textit{ “A high-bias, low-variance introduction to machine learning for physicists”.}
+	 In: arXiv preprint arXiv:1803.08823 (2018). Addison-Wesley, Reading, Massachusetts, 1993.
+\end{thebibliography}
+
 
 \end{document}
