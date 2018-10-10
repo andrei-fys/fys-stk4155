@@ -21,7 +21,7 @@ FYS-STK 4155
 
 \maketitle
 \begin{abstract}
-In this project we have performed the Ordinary Least Squares (OSL), Ridge and Lasso regression. The solvers for OSL and Ridge have been developed from scratch and the Lasso regression have been implemented using a Sci-Kit learn library. The estimators were used on the test Franke function (REF) and on the real data - terrain data for Norway.The k-fold cross validation for all the methods have been also implemented and the bias-variance was studied for all the models.\\!
+In this project we have performed the Ordinary Least Squares (OSL), Ridge and Lasso regression. The solvers for OSL and Ridge have been developed from scratch and the Lasso regression have been implemented using a Sci-Kit learn library. The estimators were used on the test Franke function (\cite{Franke}) and on the real data - terrain data for Norway.The k-fold cross validation for all the methods have been also implemented and the bias-variance was studied for all the models. The OLS method with polynomial degree $6$ was used for fitting  this specific terrain data, the regression parameter $R^2=0.98$.
 \end{abstract}
 \clearpage 
 
@@ -56,7 +56,7 @@ In matrix form it can be written as:
 \end{equation}
 here $\hat{\epsilon}$ is error vector.
 In order to obtain $\hat{\beta}$ values we have to minimize the error.
-In order to do so we set up the function that provide us the difference between the exact $y$ and approximated values $\tilde{y}$. This function is denoted as $Q(\hat{\beta})$ and has a specific form for each of the regression methods disscused below.
+In order to do so we set up the function that provide us the difference between the exact $y$ and approximated values $\tilde{y}$. This function is denoted as $Q(\hat{\beta})$ and has a specific form for each of the regression methods discussed below.
 \subsection{Ordinary Least Squared and Ridge regression}
 We present both methods here because OLS can be presented as Ridge regression for specific value of regerssion parameter.
 \begin{align}
@@ -101,41 +101,104 @@ K-fold cross-validation require dividing the data set into a set of k-subsets (f
 
 As it was mentioned in $\ref{resampling}$ overfitting is a problem we want to avoid. This many be done by reducing the complexity of the model. However, it may lead to another problem - underfitting, which is means that we are ignoring some important features of the train data. The problem of balancing these two is called bias-variance tradeoff or bias-variance dilemma \cite{biasvar}. This is a well known problem in data analysis. Here high bias correspond to underfitting and high variance to overfitting. High bias usually means that the model is not complex enough and correspondingly high variance means that model is too complex. \\
 The higher complexity of the model means that we have better approximation and that lead to lower bias. However any real model has noise and higher approximation is not always good, as we want to avoid the influence of noise. Reducing complexity we obtain lower approximation and higher variance. The best case scenario here is to balance bias and variance.  
-
+Below is the equation for estimator the error:
 \begin{eqnarray}
-	E[(y - \hat f(x))^2] = \\ \left(E[f(x) - \hat f(x)]^2\right)+ \left(E[\hat f(x)^2] - E[\hat f(x)]^2\right) + \sigma^2 =\\ \text{Bias}(\hat f(x))^2 + \text{Var}(\hat f(x)) + \sigma^2
+	E[(y - \hat f(x))^2] = \nonumber \\
+	 \left(E[f(x) - \hat f(x)]^2\right)+ \left(E[\hat f(x)^2] - E[\hat f(x)]^2\right) + \sigma^2 =\\ \text{Bias}(\hat f(x))^2 + \text{Var}(\hat f(x)) + \sigma^2 \nonumber,
+	 \label{eq:BiasVar}
 \end{eqnarray}
+here $\sigma^2$ represents noise and $baise^2$ represent deviation form exact data.
+\subsection{Regression parameter $R^2$}
+Parameter $R^2$ is used to measure how close the data are to fitted regression line. It is given by:
+\begin{align}
+R^2(y,\tilde{y}) = 1 - \frac{\sum_{i=0}^{n-1}(y_i - \tilde{y}_i)^2}{\sum_{i=0}^{n-1}(y_i - \bar{y})^2}
+\label{eq:r2_score}
+\end{align}
+with $\bar{y}$ defined as 
+\begin{align*}
+\bar{y} = \frac{1}{n}\sum^{n-1}_{i=0} y_i
+\end{align*}
+Another parameter we are using to compare models is Mean Square Error (MSE) and is given by:
+\begin{align}
+\text{MSE} = \frac{1}{n} \sum^{n-1}_{i=0}(y_i - \tilde{y}_i)^2,
+\label{eq:mse}
+\end{align}
+and is simply the averaged squared errors.
+
 \subsection{The Franke function}
+
+\begin{figure}
+	\centerline{\includegraphics[scale=0.9]{Franke_axact.pdf}}
+	\caption{The exact Franke function used in the project to test the fitting.}	\label{plt:Franke_exact}
+\end{figure}
+
+The Franke function is given by following equation:
 \begin{align*}
 f(x,y) &= \frac{3}{4}\exp{\left(-\frac{(9x-2)^2}{4} - \frac{(9y-2)^2}{4}\right)}+\frac{3}{4}\exp{\left(-\frac{(9x+1)^2}{49}- \frac{(9y+1)}{10}\right)} \\
 &+\frac{1}{2}\exp{\left(-\frac{(9x-7)^2}{4} - \frac{(9y-3)^2}{4}\right)} -\frac{1}{5}\exp{\left(-(9x-4)^2 - (9y-7)^2\right)}.
 \end{align*}
+It is presented on Fig. $\ref{plt:Franke_exact}$. 
+
+
+\subsection{The Terrain Data}
+Terrain data is taken from the border aria between Guinea and Mali. On Fig. $\ref{plt:RawTerra}$ and Fig. $\ref{plt:Terra2D}$ are presented plots for this are in 3D and in 2D.
+\begin{figure}
+	\centerline{\includegraphics[scale=0.9]{terra2Draw.pdf}}
+	\caption{Terrain data in 2D}\label{plt:Terra2D}
+\end{figure}
 
 \begin{figure}
-	\centerline{\includegraphics[scale=0.9]{Franke_axact.pdf}}
-		\label{plt:Franke_exact}
-		\caption{The exact Franke function used in the project to test the fitting.}
+	\centerline{\includegraphics[scale=0.9]{terraRaw.pdf}}
+	\caption{Terrain data raw} \label{plt:RawTerra}
+\end{figure}
+
+
+\begin{figure}
+	\centerline{\includegraphics[scale=0.9]{No_sampling_Franke_3methods.pdf}}
+	\caption{ BV MSE } \label{plt:no_sampling_Franke_3m_BVMSE}
+\end{figure}
+
+
+\begin{figure}
+	\centerline{\includegraphics[scale=0.9]{With_sampling_3M_Franke.pdf}}
+	\caption{ BV MSE } \label{plt:with_sampling_Franke_3m_BVMSE}
 \end{figure}
 
 \begin{figure}
 	\centerline{\includegraphics[scale=0.9]{Franke_fitted_OLS.pdf}}
-	\label{plt:Franke_fitted_OLS}
-	\caption{The  Franke function fitted by OLS, no resampling}
+	\caption{The  Franke function fitted by OLS, no resampling} \label{plt:Franke_fitted_OLS}
 \end{figure}
 
 \begin{figure}
 	\centerline{\includegraphics[scale=0.9]{Franke_fitted_Ridge.pdf}}
-	\label{plt:Franke_fitted_Ridge}
-	\caption{The  Franke function fitted by Ridge, no resampling}
+	\caption{The  Franke function fitted by Ridge, no resampling} \label{plt:Franke_fitted_Ridge}
 \end{figure}
 
 \begin{figure}
-	\centerline{\includegraphics[scale=0.9]{Franke_fitted_Lasso.pdf}}
-	\label{plt:Franke_fitted_Lasso}
-	\caption{The  Franke function fitted by Lasso, no resampling}
+	\centerline{\includegraphics[scale=1.0]{confidenceCVnoisy.pdf}}
+	\label{plt:BetaNoiseCV}
+	\caption{ resampling noise}
 \end{figure}
 
+\begin{figure}
+	\centerline{\includegraphics[scale=1.0]{confidencenoCVnoisy.pdf}}
+	\label{plt:BetaNoiseNoCV}
+	\caption{ no resampling noise}
+\end{figure}
+
+
+
+\begin{figure}
+	\centerline{\includegraphics[scale=0.9]{terraFit.pdf}}
+	\caption{Terrain data fit}
+\end{figure}
+
+
+
 \section{Results and discussion} \label{Results}
+We begin with the fitting of Franke function. On Fig. $\ref{plt:Franke_fitted_OLS}$ and Fig. $\ref{plt:Ridge_CV_bias_MSE_w_resample}$ one may see how the function have been fitted using the OLS and Ridge regression. 
+
+
 
 \begin{table}
 	\begin{tabular}{ |c|c|c|c|c|c|c|c|} 
@@ -160,6 +223,20 @@ f(x,y) &= \frac{3}{4}\exp{\left(-\frac{(9x-2)^2}{4} - \frac{(9y-2)^2}{4}\right)}
 \end{table}
 
 
+%\begin{figure}
+%	\centerline{\includegraphics[scale=0.9]{bias_terrain_3m.pdf}}
+%	\caption{Terrain data bias} \label{plt:BiasTerra}
+%\end{figure}
+
+\begin{figure}
+	\centerline{\includegraphics[scale=0.9]{R2_terrain3M.pdf}}
+	\caption{Terrain data $R^2$} \label{plt:R2Terra}
+\end{figure}
+
+%\begin{figure}
+%	\centerline{\includegraphics[scale=0.9]{MSE_3methodsCV_tera.pdf}}
+%	\caption{Terrain data MSE} \label{plt:MSETerra}
+%end{figure}
 
 
 
@@ -171,10 +248,17 @@ f(x,y) &= \frac{3}{4}\exp{\left(-\frac{(9x-2)^2}{4} - \frac{(9y-2)^2}{4}\right)}
 
 
 \begin{thebibliography}{9}
+	\bibitem{Franke} 
+	Richard Franke. 
+	\textit{A critical comparison of some methods for interpolation of scattered data. }
+	Technical report, Monterey, California: Naval Postgraduate School., 1979.
+	
 	\bibitem{biasvar} 
 	Pankaj Mehta et al. 
 	\textit{ “A high-bias, low-variance introduction to machine learning for physicists”.}
 	 In: arXiv preprint arXiv:1803.08823 (2018). Addison-Wesley, Reading, Massachusetts, 1993.
+
+
 \end{thebibliography}
 
 
