@@ -165,7 +165,7 @@ Terrain data is taken from the border aria between Guinea and Mali. On Fig. $\re
 \end{figure}
 
 \section{Results and discussion} \label{Results}
-We begin with the fitting of Franke function. On Fig. $\ref{plt:Franke_fitted_OLS}$ and Fig. $\ref{plt:Ridge_CV_bias_MSE_w_resample}$ one may see the Franke function fitted using polynomial degree 5 and two different methods, OLS and Ridge regressions.   \\
+We begin with the fitting of Franke function. On Fig. $\ref{plt:Franke_fitted_OLS}$ and Fig. $\ref{plt:Franke_fitted_Ridge}$ one may see the Franke function fitted using polynomial degree 5 and two different methods, OLS and Ridge regressions.   \\
 On Fig. $\ref{plt:no_sampling_Franke_3m_BVMSE}$ and Fig. $\ref{plt:with_sampling_Franke_3m_BVMSE}$ we presented data for the error estimation for all three methods with and without resampling. The resampling turns to improve our model a lot. Date for the optimal fit with degree 5 are presented in Table $\ref{tbl:one}$. However if we increase the polynomial degree the model become worse because $R^2$ turns to become much smaller.\\
 
 \begin{figure}
@@ -175,10 +175,11 @@ On Fig. $\ref{plt:no_sampling_Franke_3m_BVMSE}$ and Fig. $\ref{plt:with_sampling
 
 \begin{figure}
 	\centerline{\includegraphics[scale=0.7]{Franke_fitted_Ridge.pdf}}
-	\caption{The  Franke function fitted by Ridge, polynomial fit with degree 5.} \label{plt:Franke_fitted_Ridge}
+	\caption{The  Franke function fitted by Ridge, polynomial fit with degree 5.}
+	\label{plt:Franke_fitted_Ridge}
 \end{figure}
 \newpage
-The effect of noise can be seen on Fig. and Fig.$\ref{plt:BetaNoiseCV}$ compared to Fig. $\ref{plt:BetaNoiseNoCV}$ and Fig. $\ref{plt:BetaNoiseNoCV}$. The presence of noise increase an variance in regression coefficients and effect models in a negative way. However Ridge and Lasso turns to be more sensitive to noise then OLS.
+The effect of noise can be seen on Fig. $\ref{plt:BetaNoiseCV}$ and Fig.$\ref{plt:BetaNoiseNoCV}$ compared to Fig. $\ref{plt:BetaNONoiseCV}$ and Fig. $\ref{plt:BetaNONoiseNoCV}$. The presence of noise increase an variance in regression coefficients and effect models in a negative way. However Ridge and Lasso turns to be more sensitive to noise then OLS.
 
 
 \begin{figure}
@@ -250,7 +251,7 @@ The effect of noise can be seen on Fig. and Fig.$\ref{plt:BetaNoiseCV}$ compared
 %end{figure}
 
 
-
+We have also studies the terrain data estimation as a function of the degree of polynomial fit. On Fig. $\ref{plt:R2Terra}$ one can see how the $R^2$ drops for the OLS as we increase the degree of the polynomial fit.  The best possible model considering the bais-variance tradeoff turns to be the one with OLS, fitted by $6^{th}$ order polynomial.  
 
 
 
