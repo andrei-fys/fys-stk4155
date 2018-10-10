@@ -39,6 +39,7 @@ def SetUpDesignMatrix(degree, x,y):
 ''' SCI-KIT implementation'''
 
 def OLS_SK(degree, X, x, y):
+
     olsreg = LinearRegression(fit_intercept=False)
     z = FrankeFunction(x,y)
     olsreg.fit(X, z.ravel())
@@ -49,9 +50,27 @@ def OLS_SK(degree, X, x, y):
     N, P = X.shape
     z_variance = np.sum((z.ravel() - zpredict)**2) / (N - P - 1)
     linreg_coef_var = np.diag(np.linalg.inv(X.T @ X))*z_variance
-    print ('Variance in beta for OSL ',linreg_coef_var)
-    print ('Variance  for OSL ', z_variance)
-    print ('R2, Bias, MSE error for OSL ',r2,bias,mse_error)
+    #print ('Variance in beta for OSL ',linreg_coef_var)
+    #print ('Variance  for OSL ', z_variance)
+    #print ('R2, Bias, MSE error for OSL ',r2,bias,mse_error)
+    #print ('beta ', olsreg.coef_)
+    out = [r2,bias,mse_error, degree]
+    out = np.asarray(out)
+    #file = open(filename,'a') 
+    #np.savetxt(filename1, np.c_[olsreg.coef_,linreg_coef_var], fmt='%10.9f' , delimiter=',') 
+    #np.savetxt(filename2, np.c_[r2,bias,mse_error, degree], fmt='%10.9f' , delimiter=',') 
+
+    STD = np.sqrt(linreg_coef_var)
+    score = np.sqrt((1-r2)**2 + mse_error**2)
+    ''' Write to file:  '''
+    f_handle = open('OLS_no_resemple_param_all.txt', 'a')
+    np.savetxt(f_handle, np.c_[z_variance, bias, mse_error, degree, r2, score], fmt='%10.20f' , delimiter=',') 
+    f_handle.close()
+    if (degree==5):
+        f_handle1 = open('OLS_no_resemple_param_beta.txt', 'a')
+        np.savetxt(f_handle1, np.c_[olsreg.coef_, STD], fmt='%10.20f' , delimiter=',') 
+        f_handle1.close()
+
 
     '''Make plot
 
@@ -91,15 +110,23 @@ def Rigde_SK(degree, X, alpha, x, y):
     R2 = ridge.score(X, z.ravel())
     bias = bias2(z.ravel(), zpredict)
     mse_error = mse(z.ravel(), zpredict)
-    print (r2,bias,mse_error)
     N, P = X.shape
     z_variance = np.sum((z.ravel() - zpredict)**2) / (N - P - 1)
     beta_variance = ridge_regression_variance(
             X, z_variance, alpha)
-    print ('Variance in beta for Ridge ',beta_variance)
-    print ('R2, Bias, MSE error for Ridge ',r2, bias,mse_error)
-    print ('Alternative r2 ',R2)
-    print ('Variance', z_variance)
+    #print ('Variance in beta for Ridge ',beta_variance)
+    #print ('R2, Bias, MSE error for Ridge ',r2, bias,mse_error)
+    #print ('Alternative r2 ',R2)
+    #print ('Variance', z_variance)
+    score = np.sqrt((1-r2)**2 + mse_error**2)
+    STD = np.sqrt(beta_variance)
+    f_handle = open('Ridge_no_resemple_param_all.txt', 'a')
+    np.savetxt(f_handle, np.c_[z_variance, bias, mse_error, degree, r2, score, alpha], fmt='%10.20f' , delimiter=',') 
+    f_handle.close()
+    if (degree==5):
+        f_handle1 = open('Ridge_no_resemple_param_beta.txt', 'a')
+        np.savetxt(f_handle1, np.c_[ridge.coef_, STD ], fmt='%10.20f' , delimiter=',') 
+        f_handle1.close()
 
     '''Make plot
 
@@ -145,10 +172,18 @@ def Lasso_SK(degree, X, alpha,x,y):
     beta_variance = ridge_regression_variance(
             X, z_variance, alpha)
     #print ('Variance in beta for Lasso ', beta_variance)
-    print ('R2, Bias, MSE error for Lasso ',r2, bias, mse_error)
-    print ('Alternative r2 ',R2)
-    print ('Variance', z_variance)
-
+    #print ('R2, Bias, MSE error for Lasso ',r2, bias, mse_error)
+    #print ('Alternative r2 ',R2)
+    #print ('Variance', z_variance)
+    score = np.sqrt((1-r2)**2 + mse_error**2)
+    STD = np.sqrt(beta_variance)
+    f_handle = open('Lasso_no_resemple_param_all.txt', 'a')
+    np.savetxt(f_handle, np.c_[z_variance, bias, mse_error, degree, r2, score, alpha], fmt='%10.20f' , delimiter=',') 
+    f_handle.close()
+    if (degree==5):
+        f_handle1 = open('Lasso_no_resemple_param_beta.txt', 'a')
+        np.savetxt(f_handle1, np.c_[lasso.coef_, STD ], fmt='%10.20f' , delimiter=',') 
+        f_handle1.close()
     '''Make plot
 
     fig = plt.figure()
@@ -217,12 +252,23 @@ def OLS_CV_SKI(degree, x, y):
 
     beta_variance = np.asarray(beta_).var(axis=0)
     beta_ = np.asarray(beta_).mean(axis=0)
-    print ('Sci-Kit k fold for OLS results: ')
-    print ('MSE',MSE)
-    print ('R_2', R_2)
-    print ('Beta coef variance ', beta_variance)
-    print ('Bias2', bias)
-    print ('Variance', var)
+    
+    #print ('Sci-Kit k fold for OLS results: ')
+    #print ('MSE',MSE)
+    #print ('R_2', R_2)
+    #print ('Beta coef variance ', beta_variance)
+    #print ('Bias2', bias)
+    #print ('Variance', var)
+    #print ('Score ', np.sqrt((1-R_2)**2+ MSE**2))
+    score = np.sqrt((1-R_2)**2+ MSE**2)
+    STD = np.sqrt(beta_variance)
+    f_handle = open('OLS_CV_resample_param_all.txt', 'a')
+    np.savetxt(f_handle, np.c_[var, bias, MSE, degree, R_2, score], fmt='%10.20f' , delimiter=',') 
+    f_handle.close()
+    if (degree==5):
+        f_handle1 = open('OLS_CV_resample_param_beta.txt', 'a')
+        np.savetxt(f_handle1, np.c_[beta_, STD], fmt='%10.20f' , delimiter=',') 
+        f_handle1.close()
 
 
 def Ridge_CV_SKI(degree, x, y, alpha):
@@ -274,6 +320,15 @@ def Ridge_CV_SKI(degree, x, y, alpha):
     print ('Beta coef variance ', beta_variance)
     print ('Bias2', bias)
     print ('Variance', var)
+    score = np.sqrt((1-R_2)**2+ MSE**2)
+    STD = np.sqrt(beta_variance)
+    f_handle = open('Ridge_CV_resample_param_all.txt', 'a')
+    np.savetxt(f_handle, np.c_[var, bias, MSE, degree, R_2, score, alpha], fmt='%10.20f' , delimiter=',') 
+    f_handle.close()
+    if (degree==5):
+        f_handle1 = open('Ridge_CV_resample_param_beta.txt', 'a')
+        np.savetxt(f_handle1, np.c_[beta_, STD], fmt='%10.20f' , delimiter=',') 
+        f_handle1.close()
 
 
 
@@ -321,12 +376,23 @@ def Lasso_CV_SKI(degree, x, y, alpha):
 
     beta_variance = np.asarray(beta_).var(axis=0)
     beta_ = np.asarray(beta_).mean(axis=0)
-    print ('Sci-Kit k fold for Lasso results: ')
-    print ('MSE',MSE)
-    print ('R_2', R_2)
+
+    score = np.sqrt((1-R_2)**2+ MSE**2)
+    STD = np.sqrt(beta_variance)
+    f_handle = open('Lasso_CV_resample_param_all.txt', 'a')
+    np.savetxt(f_handle, np.c_[var, bias, MSE, degree, R_2, score, alpha], fmt='%10.20f' , delimiter=',') 
+    f_handle.close()
+    if (degree==5):
+        f_handle1 = open('Lasso_CV_resample_param_beta.txt', 'a')
+        np.savetxt(f_handle1, np.c_[beta_, STD], fmt='%10.20f' , delimiter=',') 
+        f_handle1.close()
+
+    #print ('Sci-Kit k fold for Lasso results: ')
+    #print ('MSE',MSE)
+    #print ('R_2', R_2)
     #print ('Beta coef variance ', beta_variance)
-    print ('Bias2', bias)
-    print ('Variance', var)
+    #print ('Bias2', bias)
+    #print ('Variance', var)
 
 
 ''' Manual implementation'''
@@ -347,9 +413,9 @@ if __name__ == '__main__':
     #OLS_SK(degree, X, x, y)
     #alpha = float(sys.argv[2])
     #alpha = 0.2
-    #Rigde_SK(degree, X, alpha, x, y)
-    #Lasso_SK(degree, X, alpha, x, y)
-    OLS_CV_SKI(degree, x, y)
+    Rigde_SK(degree, X, alpha, x, y)
+    Lasso_SK(degree, X, alpha, x, y)
+    #OLS_CV_SKI(degree, x, y)
     Ridge_CV_SKI(degree, x, y, alpha)
     Lasso_CV_SKI(degree, x, y, alpha)
     
