@@ -155,50 +155,60 @@ Terrain data is taken from the border aria between Guinea and Mali. On Fig. $\re
 
 \begin{figure}
 	\centerline{\includegraphics[scale=0.9]{No_sampling_Franke_3methods.pdf}}
-	\caption{ BV MSE } \label{plt:no_sampling_Franke_3m_BVMSE}
+	\caption{$Biase^2$, $variance$ and $MSE$ for Franke function as function the polynomial degree for OLS, Lasso and Ridge. No resampling.} \label{plt:no_sampling_Franke_3m_BVMSE}
 \end{figure}
 
 
 \begin{figure}
 	\centerline{\includegraphics[scale=0.9]{With_sampling_3M_Franke.pdf}}
-	\caption{ BV MSE } \label{plt:with_sampling_Franke_3m_BVMSE}
+	\caption{ $Biase^2$, $variance$ and $MSE$ for Franke function as function the polynomial degree for OLS, Lasso and Ridge. Resampling with five-hold cross-validation.} \label{plt:with_sampling_Franke_3m_BVMSE}
 \end{figure}
 
 \begin{figure}
 	\centerline{\includegraphics[scale=0.9]{Franke_fitted_OLS.pdf}}
-	\caption{The  Franke function fitted by OLS, no resampling} \label{plt:Franke_fitted_OLS}
+	\caption{The  Franke function fitted by OLS, polynomial fit with degree 5.} \label{plt:Franke_fitted_OLS}
 \end{figure}
 
 \begin{figure}
 	\centerline{\includegraphics[scale=0.9]{Franke_fitted_Ridge.pdf}}
-	\caption{The  Franke function fitted by Ridge, no resampling} \label{plt:Franke_fitted_Ridge}
-\end{figure}
-
-\begin{figure}
-	\centerline{\includegraphics[scale=1.0]{confidenceCVnoisy.pdf}}
-	\label{plt:BetaNoiseCV}
-	\caption{ resampling noise}
-\end{figure}
-
-\begin{figure}
-	\centerline{\includegraphics[scale=1.0]{confidencenoCVnoisy.pdf}}
-	\label{plt:BetaNoiseNoCV}
-	\caption{ no resampling noise}
-\end{figure}
-
-
-
-\begin{figure}
-	\centerline{\includegraphics[scale=0.9]{terraFit.pdf}}
-	\caption{Terrain data fit}
+	\caption{The  Franke function fitted by Ridge, polynomial fit with degree 5.} \label{plt:Franke_fitted_Ridge}
 \end{figure}
 
 
 
 \section{Results and discussion} \label{Results}
-We begin with the fitting of Franke function. On Fig. $\ref{plt:Franke_fitted_OLS}$ and Fig. $\ref{plt:Ridge_CV_bias_MSE_w_resample}$ one may see how the function have been fitted using the OLS and Ridge regression. 
+We begin with the fitting of Franke function. On Fig. $\ref{plt:Franke_fitted_OLS}$ and Fig. $\ref{plt:Ridge_CV_bias_MSE_w_resample}$ one may see the Franke function fitted using polynomial degree 5 and two different methods, OLS and Ridge regressions.   \\
+On Fig. $\ref{plt:no_sampling_Franke_3m_BVMSE}$ and Fig. $\ref{plt:with_sampling_Franke_3m_BVMSE}$ we presented data for the error estimation for all three methods with and without resampling. The resampling turns to improve our model a lot. Date for the optimal fit with degree 5 are presented in Table $\ref{tbl:one}$. However if we increase the polynomial degree the model become worse because $R^2$ turns to become much smaller then one.
 
 
+\begin{figure}
+	\centerline{\includegraphics[scale=1.0]{confidenceCVnoisy.pdf}}
+	\label{plt:BetaNoiseCV}
+	\caption{$\beta$ coefficients for Franke function with polynomial fit of degree 5 for OLS, Lasso, Ridge. Noise added, with five-fold cross-validation}
+\end{figure}
+
+\begin{figure}
+	\centerline{\includegraphics[scale=1.0]{confidencenoCVnoisy.pdf}}
+	\label{plt:BetaNoiseNoCV}
+	\caption{$\beta$ coefficients for Franke function with polynomial fit of degree 5 for OLS, Lasso, Ridge. Noise added. Without resampling.}
+\end{figure}
+
+\begin{figure}
+	\centerline{\includegraphics[scale=1.0]{confidenceCV_noNoise.pdf}}
+	\label{plt:BetaNONoiseCV}
+	\caption{$\beta$ coefficients for Franke function with polynomial fit of degree 5 for OLS, Lasso, Ridge. No noise, with five-fold cross-validation}
+\end{figure}
+
+\begin{figure}
+	\centerline{\includegraphics[scale=1.0]{confidencenoCV_noNiose.pdf}}
+	\label{plt:BetaNONoiseNoCV}
+	\caption{$\beta$ coefficients for Franke function with polynomial fit of degree 5 for OLS, Lasso, Ridge. No noise. Without resampling.}
+\end{figure}
+
+\begin{figure}
+	\centerline{\includegraphics[scale=0.9]{terraFit.pdf}}
+	\caption{Terrain data fit}
+\end{figure}
 
 \begin{table}
 	\begin{tabular}{ |c|c|c|c|c|c|c|c|} 
@@ -219,7 +229,7 @@ We begin with the fitting of Franke function. On Fig. $\ref{plt:Franke_fitted_OL
 		Lasso resampled & 0.03392132  & 0.99997866 & 0.033921304 & 2.0627578$\times 10^{-8}$    \\ 
 		\hline
 	\end{tabular}
-	\caption{MSE, $R^2$, $Bias^2$ and variance for OLS, Ridge and Lasso regression. Regression parameter $\lambda=0.2$ for Ridge and  $\lambda=0.015$  for Lasso. Five-fold cross-validation was used.}
+	\caption{MSE, $R^2$, $Bias^2$ and variance for OLS, Ridge and Lasso regression. Regression parameter $\lambda=0.2$ for Ridge and  $\lambda=0.015$  for Lasso. Five-fold cross-validation was used.} \label{tbl:one}
 \end{table}
 
 
