@@ -50,9 +50,10 @@ def OLS_SK(degree, X, x, y):
     z_variance = np.sum((z.ravel() - zpredict)**2) / (N - P - 1)
     linreg_coef_var = np.diag(np.linalg.inv(X.T @ X))*z_variance
     print ('Variance in beta for OSL ',linreg_coef_var)
+    print ('Variance  for OSL ', z_variance)
     print ('R2, Bias, MSE error for OSL ',r2,bias,mse_error)
 
-    '''Make plot'''
+    '''Make plot
 
     fig = plt.figure()
     ax = fig.gca(projection='3d')
@@ -76,6 +77,7 @@ def OLS_SK(degree, X, x, y):
     #plt.savefig("Franke_fitted_OLS.pdf")
     #plt.savefig("Franke_fitted_Ridge.pdf")
     #plt.savefig("Franke_fitted_Lasso.pdf")
+    '''
 
 
 
@@ -97,8 +99,9 @@ def Rigde_SK(degree, X, alpha, x, y):
     print ('Variance in beta for Ridge ',beta_variance)
     print ('R2, Bias, MSE error for Ridge ',r2, bias,mse_error)
     print ('Alternative r2 ',R2)
+    print ('Variance', z_variance)
 
-    '''Make plot'''
+    '''Make plot
 
     fig = plt.figure()
     ax = fig.gca(projection='3d')
@@ -122,12 +125,13 @@ def Rigde_SK(degree, X, alpha, x, y):
     #plt.savefig("Franke_fitted_OLS.pdf")
     #plt.savefig("Franke_fitted_Ridge.pdf")
     #plt.savefig("Franke_fitted_Lasso.pdf")
-
+    '''
 
     
 def Lasso_SK(degree, X, alpha,x,y): 
-    alphas = np.arange(0.2, 0.6, 0.001) 
-    lasso = LassoCV(alphas=alphas, fit_intercept=False )
+    #alphas = np.arange(0.2, 0.6, 0.001) 
+    #lasso = LassoCV(alphas=alphas, fit_intercept=False )
+    lasso = Lasso(alpha=alpha, fit_intercept=False)
     z = FrankeFunction(x,y)
     lasso.fit(X, z.ravel())
     zpredict = lasso.predict(X)
@@ -140,11 +144,12 @@ def Lasso_SK(degree, X, alpha,x,y):
     z_variance = np.sum((z.ravel() - zpredict)**2) / (N - P - 1)
     beta_variance = ridge_regression_variance(
             X, z_variance, alpha)
-    #print ('Variance in beta for Lasso ',beta_variance)
-    #print ('R2, Bias, MSE error for Lasso ',r2, bias,mse_error)
+    #print ('Variance in beta for Lasso ', beta_variance)
+    print ('R2, Bias, MSE error for Lasso ',r2, bias, mse_error)
     print ('Alternative r2 ',R2)
+    print ('Variance', z_variance)
 
-    '''Make plot'''
+    '''Make plot
 
     fig = plt.figure()
     ax = fig.gca(projection='3d')
@@ -168,6 +173,7 @@ def Lasso_SK(degree, X, alpha,x,y):
     #plt.savefig("Franke_fitted_OLS.pdf")
     #plt.savefig("Franke_fitted_Ridge.pdf")
     plt.savefig("Franke_fitted_Lasso.pdf")
+    '''
 
 
 def OLS_CV_SKI(degree, x, y):
@@ -178,9 +184,9 @@ def OLS_CV_SKI(degree, x, y):
         test_size=0.2, shuffle=True)
 
     kf = sklearn.model_selection.KFold(n_splits=5)
-
-    X_test = np.c_[np.ones(x_test.shape), x_test, x_test*x_test]
-    X_train = np.c_[np.ones(x_train.shape), x_train, x_train*x_train]
+    polynom = sklearn.preprocessing.PolynomialFeatures(degree=degree, include_bias=True)
+    X_test = polynom.fit_transform(x_test)
+    X_train = polynom.fit_transform(x_train)
 
     y_predicted = []
     beta_ = []
@@ -216,6 +222,7 @@ def OLS_CV_SKI(degree, x, y):
     print ('R_2', R_2)
     print ('Beta coef variance ', beta_variance)
     print ('Bias2', bias)
+    print ('Variance', var)
 
 
 def Ridge_CV_SKI(degree, x, y, alpha):
@@ -226,9 +233,10 @@ def Ridge_CV_SKI(degree, x, y, alpha):
         test_size=0.2, shuffle=True)
 
     kf = sklearn.model_selection.KFold(n_splits=5)
-
-    X_test = np.c_[np.ones(x_test.shape), x_test, x_test*x_test]
-    X_train = np.c_[np.ones(x_train.shape), x_train, x_train*x_train]
+    polynom = sklearn.preprocessing.PolynomialFeatures(degree=degree, include_bias=True)
+    X_test = polynom.fit_transform(x_test)
+    X_train = polynom.fit_transform(x_train)
+    
 
     y_predicted = []
     beta_ = []
@@ -265,6 +273,7 @@ def Ridge_CV_SKI(degree, x, y, alpha):
     print ('R_2', R_2)
     print ('Beta coef variance ', beta_variance)
     print ('Bias2', bias)
+    print ('Variance', var)
 
 
 
@@ -273,12 +282,13 @@ def Lasso_CV_SKI(degree, x, y, alpha):
     z = FrankeFunction(x,y)
     x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(
         np.c_[x.ravel(), y.ravel()], z.ravel(),
-        test_size=0.2, shuffle=True)
+        test_size=0.1, shuffle=True)
 
     kf = sklearn.model_selection.KFold(n_splits=5)
 
-    X_test = np.c_[np.ones(x_test.shape), x_test, x_test*x_test]
-    X_train = np.c_[np.ones(x_train.shape), x_train, x_train*x_train]
+    polynom = sklearn.preprocessing.PolynomialFeatures(degree=degree, include_bias=True)
+    X_test = polynom.fit_transform(x_test)
+    X_train = polynom.fit_transform(x_train)
 
     y_predicted = []
     beta_ = []
@@ -300,7 +310,9 @@ def Lasso_CV_SKI(degree, x, y, alpha):
     # Bias
     _mean_pred = np.mean(y_predicted, axis=0, keepdims=True)
     bias = np.mean((y_test - _mean_pred)**2)
-
+    #print (np.shape(y_predicted))
+   
+    
     # R^2 
     R_2 = np.mean(R2(y_test, y_predicted, axis=0))
 
@@ -309,12 +321,12 @@ def Lasso_CV_SKI(degree, x, y, alpha):
 
     beta_variance = np.asarray(beta_).var(axis=0)
     beta_ = np.asarray(beta_).mean(axis=0)
-    print ('Sci-Kit k fold for Ridge results: ')
+    print ('Sci-Kit k fold for Lasso results: ')
     print ('MSE',MSE)
     print ('R_2', R_2)
-    print ('Beta coef variance ', beta_variance)
+    #print ('Beta coef variance ', beta_variance)
     print ('Bias2', bias)
-
+    print ('Variance', var)
 
 
 ''' Manual implementation'''
@@ -325,6 +337,7 @@ if __name__ == '__main__':
 
     N=1000
     degree = int(sys.argv[1])
+    alpha = float(sys.argv[2])
     #noise = sys.argv[2]
     #degree = 5
     x,y = SetUpGrid(N);
@@ -332,11 +345,11 @@ if __name__ == '__main__':
     X = SetUpDesignMatrix(degree, x,y)
     #print (np.size(X))
     #OLS_SK(degree, X, x, y)
-    alpha = float(sys.argv[2])
+    #alpha = float(sys.argv[2])
     #alpha = 0.2
     #Rigde_SK(degree, X, alpha, x, y)
-    Lasso_SK(degree, X, alpha, x, y)
-    #OLS_CV_SKI(degree, x, y)
-    #Ridge_CV_SKI(degree, x, y, alpha)
-    #Lasso_CV_SKI(degree, x, y, alpha)
+    #Lasso_SK(degree, X, alpha, x, y)
+    OLS_CV_SKI(degree, x, y)
+    Ridge_CV_SKI(degree, x, y, alpha)
+    Lasso_CV_SKI(degree, x, y, alpha)
     
