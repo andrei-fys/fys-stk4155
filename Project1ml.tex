@@ -164,50 +164,51 @@ Terrain data is taken from the border aria between Guinea and Mali. On Fig. $\re
 	\caption{ $Biase^2$, $variance$ and $MSE$ for Franke function as function the polynomial degree for OLS, Lasso and Ridge. Resampling with five-hold cross-validation.} \label{plt:with_sampling_Franke_3m_BVMSE}
 \end{figure}
 
+\section{Results and discussion} \label{Results}
+We begin with the fitting of Franke function. On Fig. $\ref{plt:Franke_fitted_OLS}$ and Fig. $\ref{plt:Ridge_CV_bias_MSE_w_resample}$ one may see the Franke function fitted using polynomial degree 5 and two different methods, OLS and Ridge regressions.   \\
+On Fig. $\ref{plt:no_sampling_Franke_3m_BVMSE}$ and Fig. $\ref{plt:with_sampling_Franke_3m_BVMSE}$ we presented data for the error estimation for all three methods with and without resampling. The resampling turns to improve our model a lot. Date for the optimal fit with degree 5 are presented in Table $\ref{tbl:one}$. However if we increase the polynomial degree the model become worse because $R^2$ turns to become much smaller.\\
+
 \begin{figure}
-	\centerline{\includegraphics[scale=0.9]{Franke_fitted_OLS.pdf}}
+	\centerline{\includegraphics[scale=0.7]{Franke_fitted_OLS.pdf}}
 	\caption{The  Franke function fitted by OLS, polynomial fit with degree 5.} \label{plt:Franke_fitted_OLS}
 \end{figure}
 
 \begin{figure}
-	\centerline{\includegraphics[scale=0.9]{Franke_fitted_Ridge.pdf}}
+	\centerline{\includegraphics[scale=0.7]{Franke_fitted_Ridge.pdf}}
 	\caption{The  Franke function fitted by Ridge, polynomial fit with degree 5.} \label{plt:Franke_fitted_Ridge}
 \end{figure}
-
-
-
-\section{Results and discussion} \label{Results}
-We begin with the fitting of Franke function. On Fig. $\ref{plt:Franke_fitted_OLS}$ and Fig. $\ref{plt:Ridge_CV_bias_MSE_w_resample}$ one may see the Franke function fitted using polynomial degree 5 and two different methods, OLS and Ridge regressions.   \\
-On Fig. $\ref{plt:no_sampling_Franke_3m_BVMSE}$ and Fig. $\ref{plt:with_sampling_Franke_3m_BVMSE}$ we presented data for the error estimation for all three methods with and without resampling. The resampling turns to improve our model a lot. Date for the optimal fit with degree 5 are presented in Table $\ref{tbl:one}$. However if we increase the polynomial degree the model become worse because $R^2$ turns to become much smaller then one.
+\newpage
+The effect of noise can be seen on Fig. and Fig.$\ref{plt:BetaNoiseCV}$ compared to Fig. $\ref{plt:BetaNoiseNoCV}$ and Fig. $\ref{plt:BetaNoiseNoCV}$. The presence of noise increase an variance in regression coefficients and effect models in a negative way. However Ridge and Lasso turns to be more sensitive to noise then OLS.
 
 
 \begin{figure}
 	\centerline{\includegraphics[scale=1.0]{confidenceCVnoisy.pdf}}
+	\caption{$\beta$ coefficients for Franke function with polynomial fit of degree 5 for OLS, Lasso, Ridge. Noise added, with five-fold cross-validation. Error bars are in $95\%$ confidence interval.}
 	\label{plt:BetaNoiseCV}
-	\caption{$\beta$ coefficients for Franke function with polynomial fit of degree 5 for OLS, Lasso, Ridge. Noise added, with five-fold cross-validation}
 \end{figure}
 
 \begin{figure}
 	\centerline{\includegraphics[scale=1.0]{confidencenoCVnoisy.pdf}}
+	\caption{$\beta$ coefficients for Franke function with polynomial fit of degree 5 for OLS, Lasso, Ridge. Noise added. Without resampling. Error bars are in $95\%$ confidence interval.}
 	\label{plt:BetaNoiseNoCV}
-	\caption{$\beta$ coefficients for Franke function with polynomial fit of degree 5 for OLS, Lasso, Ridge. Noise added. Without resampling.}
 \end{figure}
 
 \begin{figure}
 	\centerline{\includegraphics[scale=1.0]{confidenceCV_noNoise.pdf}}
+	\caption{$\beta$ coefficients for Franke function with polynomial fit of degree 5 for OLS, Lasso, Ridge. No noise, with five-fold cross-validation. Error bars are in $95\%$ confidence interval.}
 	\label{plt:BetaNONoiseCV}
-	\caption{$\beta$ coefficients for Franke function with polynomial fit of degree 5 for OLS, Lasso, Ridge. No noise, with five-fold cross-validation}
 \end{figure}
 
 \begin{figure}
 	\centerline{\includegraphics[scale=1.0]{confidencenoCV_noNiose.pdf}}
+	\caption{$\beta$ coefficients for Franke function with polynomial fit of degree 5 for OLS, Lasso, Ridge. No noise. Without resampling. Error bars are in $95\%$ confidence interval.}
 	\label{plt:BetaNONoiseNoCV}
-	\caption{$\beta$ coefficients for Franke function with polynomial fit of degree 5 for OLS, Lasso, Ridge. No noise. Without resampling.}
 \end{figure}
 
 \begin{figure}
 	\centerline{\includegraphics[scale=0.9]{terraFit.pdf}}
 	\caption{Terrain data fit}
+	\label{plt:terraFit}
 \end{figure}
 
 \begin{table}
@@ -253,10 +254,13 @@ On Fig. $\ref{plt:no_sampling_Franke_3m_BVMSE}$ and Fig. $\ref{plt:with_sampling
 
 
 
-
-\section{Conclusion}\label{Conclusion}
-
-
+\newpage
+\section{Conclusion and Discussion}\label{Conclusion}
+In this project we have studied tree different regression methods, namely OLS, Ridge and Lasso. The method were tested on Franke function and the real terrain data. K-fold cross-validation have been done for all cases and turns to be a very good technique for the improvement of the fit. \\
+We do not spend much time on Ridge and Lasso methods as they depend on parameter $\lambda$. However, when running the program we have to be very careful with it, because it influenced performance a lot. One of the possible further studies though might be to implement the Lasso method from scratch and study it more carefully.\\
+As for the terrain data we have studied the refult presented on Fig. $\ref{plt:terraFit}$
+ 
+\newpage
 \begin{thebibliography}{9}
 	\bibitem{Franke} 
 	Richard Franke. 
